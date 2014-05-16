@@ -13,6 +13,17 @@ class MaraudersMap(object):
 		SOON
 		PLEASE'''
 		self.logbook = AHistoryOfMagic(init_state)
+		self.build_from_json(init_state)
+
+	def build_from_json(state):
+		''' json.load or json.loads will probably do the trick here.
+		Make a bunch of dictionaries out of json
+		Namely:
+		  self.canonicals, self.noncanonicals, self.commands, self.errors, self.rooms, self.players, self.things
+		  Possibly:
+		    build self.directions, self.nouns, self.verbs, etc. through reverse indexing
+		'''
+		pass
 
 	def update_state(self, state_change):
 		''' Changes state by state_change that are vetted in the Rowling.
