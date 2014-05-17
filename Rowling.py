@@ -10,8 +10,10 @@ class Rowling(object):
 	# SHOULD MAYBE MOVE THIS TO JSON AND THEN IT'S ALL IN THE CASTLE
 	# Below is sample commands and errors dicts
 
+	# MAYBE IT'S TIME FOR COMMANDS TO BE OBJECTS
+
 #	commands = {'go': {'syntax': ['direction'], 'rules': ['path_exists', 'player_can_move'], 'state_changes': 'move_player'},
-#				'look': {'syntax': [], 'rules': ['can_look_in_room']}}
+#				'look': {'syntax': {'primary': [], 'alias-to': ['examine','noun']}, 'rules': ['can_look_in_room']}}
 #	errors = {'path_exists': "You can't go that way.", 'player_can_move': "You can't move right now.",
 #				'can_look_in_room': "You can't see a thing."}
 
@@ -25,18 +27,18 @@ class Rowling(object):
 		verb = command[0]
 		args = command[1:]
 		validity = True
-		checks = castle.commands[verb]['rules']
+		checks = castle.commands[verb].rules
 		for check in checks:
 			validity = validity and cls.__getattribute__(check)(castle, player_id, command)
 			if not validity:
 				raise RowlingError(castle.errors[check])
 		# Should not get here if any of the checks return False
 		if cls.is_state_change(command):
-			for change in castle.commands[verb]['state_changes']:
+			for change in castle.commands[verb].state_changes:
 				castle.update_state(change, player_id, *args)
-		if castle.commands[verb]['query'] and castle.commands[verb]['query'] != 'radio_silence':
-			return castle.__getattribute__(castle.commands[verb]['query'])(player_id, *args)
-		elif castle.commands[verb]['query'] == 'radio_silence':
+		if castle.commands[verb].query and castle.commands[verb].query != 'radio_silence':
+			return castle.__getattribute__(castle.commands[verb].query)(player_id, *args)
+		elif castle.commands[verb].query == 'radio_silence':
 			return ''
 		else:
 			room = cls.find_player_location(castle, player_id)
@@ -46,7 +48,7 @@ class Rowling(object):
 	def is_state_change(cls, command):
 		'''Checks to see if the verb in the command is in state_commands'''
 		verb = command[0]
-		return 'state_changes' in castle.commands[verb]
+		return 'state_changes' in dir(castle.commands[verb])
 
 	@classmethod
 	def find_player_location(cls, castle, player_id):
