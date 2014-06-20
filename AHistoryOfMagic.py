@@ -1,8 +1,5 @@
 class AHistoryOfMagic(object):
-	''' Keeps track of all commands and their success.
-	WHOA HANG ON THIS SHOULD BE A DATABASE WHAT AM I THINKING
-	yeah and MaraudersMap lets you access the database
-	pfffft gonna have to change the whole thing now'''
+	''' Keeps track of all commands and their success.'''
 
 	def __init__(self, init_state):
 		self.init_state = init_state
