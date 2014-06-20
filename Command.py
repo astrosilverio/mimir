@@ -1,5 +1,5 @@
 class Command(object):
-	''' Hang on, is this how I make commands modular? '''
+	''' Similar to my previous idea of having verbs except it doesn't suck'''
 	def __init__(self, syntax=None, rules=None, state_changes=None, errors=None, query=None):
 		self.syntax = syntax
 		self.rules = rules

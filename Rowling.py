@@ -35,6 +35,7 @@ class Rowling(object):
 		if self.is_state_change(castle, command):
 			for change in castle.commands[verb].state_changes:
 				castle.update_state(change, player_id, *args)
+		# query should be what I want to return to player, most cases it's gonna be room description but maybe sometimes it's different
 		if castle.commands[verb].query and castle.commands[verb].query != 'radio_silence':
 			return castle.__getattribute__(castle.commands[verb].query)(player_id, *args)
 		elif castle.commands[verb].query == 'radio_silence':

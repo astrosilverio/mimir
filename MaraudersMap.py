@@ -34,7 +34,8 @@ class MaraudersMap(object):
 	def get_state(self):
 		'''Returns a giant dict of states?
 		...
-		why?'''
+		why?
+		no like srsly why is this here'''
 		pass
 
 	def add_player(self, username):
