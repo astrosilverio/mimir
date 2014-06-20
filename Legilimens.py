@@ -1,4 +1,4 @@
-from hogwartsexceptions import LegilimensError, RowlingError, MaraudersMapError, 
+from hogwartsexceptions import LegilimensError, RowlingError, MaraudersMapError
 from Rowling import Rowling
 
 class Legilimens(object):
@@ -22,16 +22,14 @@ class Legilimens(object):
 		if not words:
 			raise LegilimensError("I didn't understand any of that.")
 
-		# WHAT ABOUT SYNTAX YO
-
 		return words
 
 	def execute(self, user_input):
 		'''Gives processed user input to Rowling, gets response.'''
 		try:
 			legit_input = self.process(user_input)
-			response = Rowling.handle_command(self.castle, self.player_id, legit_input)
-		except LegilimensError, RowlingError, MaraudersMapError as e:
+			response = Rowling().handle_command(self.castle, self.player_id, legit_input)
+		except (LegilimensError, MaraudersMapError, RowlingError) as e:
 			response = e.message
 		finally:
 			return response

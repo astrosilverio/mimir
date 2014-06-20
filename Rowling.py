@@ -17,8 +17,7 @@ class Rowling(object):
 #	errors = {'path_exists': "You can't go that way.", 'player_can_move': "You can't move right now.",
 #				'can_look_in_room': "You can't see a thing."}
 
-	@classmethod
-	def handle_command(cls, castle, player_id, command):
+	def handle_command(self, castle, player_id, command):
 		'''Takes processed command from Legilimens.
 		Performs checks.
 		If command can be performed, passes it to MaraudersMap.
@@ -29,11 +28,11 @@ class Rowling(object):
 		validity = True
 		checks = castle.commands[verb].rules
 		for check in checks:
-			validity = validity and cls.__getattribute__(check)(castle, player_id, command)
+			validity = validity and self.__getattribute__(check)(castle, player_id, command)
 			if not validity:
 				raise RowlingError(castle.errors[check])
 		# Should not get here if any of the checks return False
-		if cls.is_state_change(command):
+		if self.is_state_change(castle, command):
 			for change in castle.commands[verb].state_changes:
 				castle.update_state(change, player_id, *args)
 		if castle.commands[verb].query and castle.commands[verb].query != 'radio_silence':
@@ -41,32 +40,31 @@ class Rowling(object):
 		elif castle.commands[verb].query == 'radio_silence':
 			return ''
 		else:
-			room = cls.find_player_location(castle, player_id)
+			room = self.find_player_location(castle, player_id)
 			return castle.look(room)
 
-	@classmethod
-	def is_state_change(cls, command):
+	def is_state_change(self, castle, command):
 		'''Checks to see if the verb in the command is in state_commands'''
 		verb = command[0]
-		return 'state_changes' in dir(castle.commands[verb])
+		return castle.commands[verb].state_changes != None
 
-	@classmethod
 	def find_player_location(cls, castle, player_id):
 		'''Finds which room the player is in. If location is an attribute on player I won't need this. Maybe goes in MaraudersMap?'''
-		pass
+		class TestRoom():
+			def __init__(self):
+				self.dark = False
+				self.description = "This is a test room"
+		return TestRoom()
 
-	@classmethod
 	def path_exists(cls, castle, player_id, command):
 		room = cls.find_player_location(castle, player_id)
 		direction = command[1]
 		return direction in room.paths
 
-	@classmethod
 	def player_can_move(cls, castle, player_id, command):
 		player = castle.players[player_id]
 		return not player.in_limbo
 
-	@classmethod
-	def can_look_in_room(cls, castle, player_id):
+	def can_look_in_room(cls, castle, player_id, command):
 		room = cls.find_player_location(castle, player_id)
 		return not room.dark

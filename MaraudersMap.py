@@ -15,7 +15,7 @@ class MaraudersMap(object):
 		self.logbook = AHistoryOfMagic(init_state)
 		self.build_from_json(init_state)
 
-	def build_from_json(state):
+	def build_from_json(self, state):
 		''' json.load or json.loads will probably do the trick here.
 		Make a bunch of dictionaries out of json
 		Namely:
@@ -39,4 +39,11 @@ class MaraudersMap(object):
 
 	def add_player(self, username):
 		'''If there is no player with username, add username. Otherwise, make something up. Return a Player object.'''
-		pass
+		class Player():
+			def __init__(self, username):
+				self.username = username
+				self.id = "1234"
+		return Player(username)
+
+	def look(self, room):
+		return room.description
