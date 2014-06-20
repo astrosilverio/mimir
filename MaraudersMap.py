@@ -39,11 +39,11 @@ class MaraudersMap(object):
 
 	def add_player(self, username):
 		'''If there is no player with username, add username. Otherwise, make something up. Return a Player object.'''
-		class Player():
+		class TestPlayer():
 			def __init__(self, username):
 				self.username = username
 				self.id = "1234"
-		return Player(username)
+		return TestPlayer(username)
 
 	def look(self, room):
 		return room.description
