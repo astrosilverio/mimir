@@ -1,4 +1,4 @@
-from hogwartsexceptions import LegilimensError, RowlingError, MaraudersMapError
+from hogwartsexceptions import LegilimensError, RowlingError, MaraudersMapError, Messages
 from Rowling import Rowling
 
 class Legilimens(object):
@@ -20,7 +20,7 @@ class Legilimens(object):
 		words = [word for word in words if word is not None]
 
 		if not words:
-			raise LegilimensError("I didn't understand any of that.")
+			raise LegilimensError(Messages.GOBBLEDEGOOK)
 
 		return words
 

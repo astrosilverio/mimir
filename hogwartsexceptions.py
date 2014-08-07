@@ -9,3 +9,8 @@ class RowlingError(Exception):
 class LegilimensError(Exception):
 	'''These are for weird commands I don't understand'''
 	pass
+
+class Messages(object):
+
+    GOBBLEDEGOOK = "I'm sorry, I didn't understand any of that."
+
