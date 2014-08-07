@@ -28,7 +28,7 @@ class Rowling(object):
 		validity = True
 		checks = castle.commands[verb].rules
 		for check in checks:
-			validity = validity and self.__getattribute__(check)(castle, player_id, command)
+			validity = validity and check(castle, player_id) # self.__getattribute__(check)(castle, player_id, command)
 			if not validity:
 				raise RowlingError(castle.errors[check])
 		# Should not get here if any of the checks return False
