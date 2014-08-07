@@ -8,3 +8,5 @@ class Command(object):
 		self.query = query
 
 		# what else do I need here?
+
+    # maybe rewriting dunder methods would do fun things?

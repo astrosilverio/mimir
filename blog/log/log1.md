@@ -24,3 +24,11 @@ Thought: zomg these should really go in the hogwarts dir and then I could commit
 I am a genius but need to finish technical post before mindless text migration
 
 2 hrs into work. Done with first semi-technical blog post! w00t w00t commencing migration
+I COMMITTED OH BABY OH BABY
+don't know what to do now
+
+TODO: migration to markdown, learn how to make a test suite instead of having to nosetests every file, tell Allison of my genius
+
+I feel so vain.
+
+can't read JSON without thinking of the Spartax, thanks Captain Marvel and GotG
