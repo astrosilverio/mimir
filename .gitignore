@@ -1,0 +1,5 @@
+# blog stuff shouldn't be in this repo
+blog/*
+
+# relics of call graph test experiments
+*.gdf
