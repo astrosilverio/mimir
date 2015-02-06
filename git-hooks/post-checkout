@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# hook location: .git/hooks/post-checkout
+
+PREVIOUS_HEAD=$1
+NEW_HEAD=$2
+BRANCH_SWITCH=$3
+
+ # if it's a branch switch and we're on a different sha, then
+ # delete .pyc files and empty directories from project root.
+#if [ $BRANCH_SWITCH == "1" -a $PREVIOUS_HEAD != $NEW_HEAD ]; then
+
+    # git rev-parse: pick out and massage parameters
+    # --show-cdup show path of top-level directory relative to current directory
+#    cd ./$(git rev-parse --show-cdup)
+
+    # find *.pyc, count them, get rid of spaces in the wc output
+#    NUM_PYC_FILES=$( find . -name "*.pyc" | wc -l | tr -d ' ' )
+
+#    if [ $NUM_PYC_FILES -gt 0 ]; then
+#        find . -name "*.pyc" -delete # find can delete too
+#        printf "\e[00;36mDeleted $NUM_PYC_FILES .pyc files.\e[00m\n"
+#    fi
+
+#    NUM_EMPTY_DIRS=$( find . -type d -empty | wc -l | tr -d ' ' )
+#    if [ $NUM_EMPTY_DIRS -gt 0 ]; then
+#        find . -type d -empty -delete
+#        printf "\e[00;36mDeleted $NUM_EMPTY_DIRS empty directories.\e[00m\n"
+#    fi
+
+#fi
+
+#if $BRANCH_SWITCH == "1"; then
+#    printf "hello there\n"
+#fi
+
+printf "hello"
