@@ -16,7 +16,7 @@ class Rowling(object):
 
 #   commands = {'go': {'syntax': ['direction'], 'rules': ['path_exists', 'player_can_move'], 'state_changes': 'move_player'},
 #               'look': {'syntax': {'primary': [], 'alias-to': ['examine','noun']}, 'rules': ['can_look_in_room']}}
-#   errors = {'path_exists': "You can't go that way.", 'player_can_move': "You can't move right now.",
+#   rules = {'path_exists': "You can't go that way.", 'player_can_move': "You can't move right now.",
 #               'can_look_in_room': "You can't see a thing."}
 
     def handle_command(self, castle, player_id, command):

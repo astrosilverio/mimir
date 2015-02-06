@@ -1,9 +1,10 @@
-from hogwartsexceptions import MaraudersMapError
+from business_rules import BaseVariables
+
 from AHistoryOfMagic import AHistoryOfMagic
 
 from base import Player
 
-class MaraudersMap(object):
+class MaraudersMap(BaseVariables):
     ''' This contains STATE ONLY.
     Perhaps should have an associated log? '''
 
