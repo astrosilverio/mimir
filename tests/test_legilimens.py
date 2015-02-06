@@ -23,6 +23,10 @@ class TestLegilimens(unittest.TestCase):
         processed = self.legilimens.process('get dratted wand')
         self.assertEqual(processed, ['take', 'wand'])
 
+    def test_process_symbol_removal(self):
+        processed = self.legilimens.process('*ta@ke* *this*, wand!?!')
+        self.assertEqual(processed, ['take', 'wand'])
+
     def test_process_with_fluff(self):
         with self.assertRaises(LegilimensError):
             self.legilimens.process('dratted bloody thing')
