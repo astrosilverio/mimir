@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# hook location: .git/hooks/pre-commit
+
+NUM_SET_TRACE=$( git diff-index -z --cached --name-only --diff-filter='ACMRTUXB' HEAD | xargs -0 grep "ipdb.set_trace()" | wc -l | tr -d ' ' )
+
+if [ $NUM_SET_TRACE -gt 0 ]; then
+    printf "\e[00;36mYou're trying to commit $NUM_SET_TRACE debugger breaks. Please fix.\e[00m\n";
+    exit 1;
+fi
