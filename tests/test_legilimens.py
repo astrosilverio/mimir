@@ -4,6 +4,7 @@ from mock import MagicMock, patch
 from Legilimens import Legilimens
 from hogwartsexceptions import LegilimensError, RowlingError, Messages
 from tests.fixtures import TestPlayer
+from tests.fixtures import TestCommand
 
 class TestLegilimens(unittest.TestCase):
 
@@ -11,6 +12,7 @@ class TestLegilimens(unittest.TestCase):
         marauders_map_mock = MagicMock()
         marauders_map_mock.canonicals = ['take', 'wand']
         marauders_map_mock.noncanonicals = {'get': 'take'}
+        marauders_map_mock.commands = {'take': TestCommand()}
         marauders_map_mock.add_player = lambda x: TestPlayer()
 
         self.legilimens = Legilimens('zork', marauders_map_mock)
@@ -43,7 +45,10 @@ class TestLegilimens(unittest.TestCase):
         response = self.legilimens.execute('take wand')
         self.assertEqual(response, 'BOOM!')
 
-    @patch('Rowling.Rowling.handle_command')
-    def test_execute_with_fluff(self, mock_handle_command):
+    def test_execute_with_fluff(self):
         response = self.legilimens.execute('dratted bloody thing')
         self.assertEqual(response, Messages.GOBBLEDEGOOK)
+
+    def test_execute_with_not_command(self):
+        response = self.legilimens.execute('wand')
+        self.assertEqual(response, Messages.UNKNOWN_VERB)
