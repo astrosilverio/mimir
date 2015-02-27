@@ -7,7 +7,7 @@ class MaraudersMap(object):
     ''' This contains STATE ONLY.
     Perhaps should have an associated log? '''
 
-    def __init__(self, init_state):
+    def __init__(self, name, init_state):
         ''' Make initial state from JSON.
         Need helper functions to build from JSON.
         Set up log.
@@ -16,6 +16,7 @@ class MaraudersMap(object):
         PLEASE'''
         self.logbook = AHistoryOfMagic(init_state)
         self.build_from_json(init_state)
+        self.name = name
 
     def build_from_json(self, state):
         ''' json.load or json.loads will probably do the trick here.

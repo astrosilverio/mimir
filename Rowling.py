@@ -1,6 +1,10 @@
-from hogwartsexceptions import RowlingError
+import logging
+
+from hogwartsexceptions import RowlingError, Messages
 
 from base import Room
+
+logger = logging.getLogger('Rowling')
 
 class Rowling(object):
     ''' Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
@@ -28,6 +32,13 @@ class Rowling(object):
         verb = command[0]
         args = command[1:]
         validity = True
+        command = castle.commands.get(verb, None)
+        if not command:
+            # if handle_command is called by Legilimens, we'll never see this
+            logger.error("handle_command called from outside Legilimens.execute by player %s in game %s",
+                            player_id, castle.name)
+            raise RowlingError(Messages.UNKNOWN_VERB)
+
         checks = castle.commands[verb].rules
         for check in checks:
             validity = validity and check(castle, player_id) # self.__getattribute__(check)(castle, player_id, command)
