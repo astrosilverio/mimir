@@ -3,7 +3,8 @@ class MaraudersMapError(Exception):
 	pass
 
 class RowlingError(Exception):
-	'''These should be if user is trying to do something they can't, like go north from a room with one path to the south''' 
+	''' These should be if user is trying to do something they can't,
+        like go north from a room with one path to the south'''
 	pass
 
 class LegilimensError(Exception):
@@ -13,4 +14,5 @@ class LegilimensError(Exception):
 class Messages(object):
 
     GOBBLEDEGOOK = "I'm sorry, I didn't understand any of that."
+    UNKNOWN_VERB = "I'm sorry, I don't know how to do that."
 
