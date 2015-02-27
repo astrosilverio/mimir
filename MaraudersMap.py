@@ -37,3 +37,12 @@ class MaraudersMap(object):
     def add_player(self, username):
         '''If there is no player with username, add username. Otherwise, make something up. Return a Player object.'''
         return Player(username)
+
+    def transaction(self):
+        pass
+
+    def rollback(self):
+        pass
+
+    def commit(self):
+        pass

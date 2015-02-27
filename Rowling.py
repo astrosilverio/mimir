@@ -1,6 +1,6 @@
 import logging
 
-from hogwartsexceptions import RowlingError, Messages
+from hogwartsexceptions import MaraudersMapError, RowlingError, Messages
 
 from base import Room
 
@@ -39,11 +39,19 @@ class Rowling(object):
                             player_id, castle.name)
             raise RowlingError(Messages.UNKNOWN_VERB)
 
-        checks = castle.commands[verb].rules
-        for check in checks:
+        for check in command.rules:
             validity = validity and check(castle, player_id) # self.__getattribute__(check)(castle, player_id, command)
             if not validity:
-                raise RowlingError(castle.errors[check])
+                raise RowlingError(command.errors[check])
+
+        castle.transaction()
+        try:
+            command.execute()
+        except MaraudersMapError:
+            castle.rollback()
+            raise RowlingError(Messages.BAD_STATE_CHANGE)
+        castle.commit()
+
         # Should not get here if any of the checks return False
         if self.is_state_change(castle, command):
             for change in castle.commands[verb].state_changes:

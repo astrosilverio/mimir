@@ -18,4 +18,5 @@ class Messages(object):
 
     GOBBLEDEGOOK = "I'm sorry, I didn't understand any of that."
     UNKNOWN_VERB = "I'm sorry, I don't know how to do that."
+    BAD_STATE_CHANGE = "I did something wrong, please try again."
 
