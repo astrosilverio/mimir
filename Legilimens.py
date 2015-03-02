@@ -39,6 +39,8 @@ class Legilimens(object):
             response = Rowling().handle_command(self.castle, self.player_id, legit_input)
         except (LegilimensError, MaraudersMapError, RowlingError) as e:
             response = e.message
+        else:
+            Rowling().handle_auto_movements(self.castle)
         finally:
             return response
 

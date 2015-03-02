@@ -54,6 +54,12 @@ class Rowling(object):
 
         return result if result else None
 
+    def handle_auto_movements(self, castle):
+        """ Runs automated logic after every turn.
+            Use to, e.g., release the basilisk at turn #100.
+        """
+        pass
+
     def is_state_change(self, castle, command):
         '''Checks to see if the verb in the command is in state_commands'''
         verb = command[0]
