@@ -59,25 +59,3 @@ class Rowling(object):
             Use to, e.g., release the basilisk at turn #100.
         """
         pass
-
-    def is_state_change(self, castle, command):
-        '''Checks to see if the verb in the command is in state_commands'''
-        verb = command[0]
-        return castle.commands[verb].state_changes != None
-
-    def find_player_location(cls, castle, player_id):
-        '''Finds which room the player is in. If location is an attribute on player I won't need this. Maybe goes in MaraudersMap?'''
-        return Room()
-
-    def path_exists(cls, castle, player_id, command):
-        room = cls.find_player_location(castle, player_id)
-        direction = command[1]
-        return direction in room.paths
-
-    def player_can_move(cls, castle, player_id, command):
-        player = castle.players[player_id]
-        return not player.in_limbo
-
-    def can_look_in_room(cls, castle, player_id, command):
-        room = cls.find_player_location(castle, player_id)
-        return not room.dark
