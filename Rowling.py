@@ -40,30 +40,19 @@ class Rowling(object):
             raise RowlingError(Messages.UNKNOWN_VERB)
 
         for check in command.rules:
-            validity = validity and check(castle, player_id) # self.__getattribute__(check)(castle, player_id, command)
+            validity = validity and check(castle, player_id)
             if not validity:
                 raise RowlingError(command.errors[check])
 
         castle.transaction()
         try:
-            command.execute()
+            result = command.execute(args)
         except MaraudersMapError:
             castle.rollback()
             raise RowlingError(Messages.BAD_STATE_CHANGE)
         castle.commit()
 
-        # Should not get here if any of the checks return False
-        if self.is_state_change(castle, command):
-            for change in castle.commands[verb].state_changes:
-                castle.update_state(change, player_id, *args)
-        # query should be what I want to return to player, most cases it's gonna be room description but maybe sometimes it's different
-        if castle.commands[verb].query and castle.commands[verb].query != 'radio_silence':
-            return castle.__getattribute__(castle.commands[verb].query)(player_id, *args)
-        elif castle.commands[verb].query == 'radio_silence':
-            return ''
-        else:
-            room = self.find_player_location(castle, player_id)
-            return castle.look(room)
+        return result if result else None
 
     def is_state_change(self, castle, command):
         '''Checks to see if the verb in the command is in state_commands'''
