@@ -2,16 +2,15 @@ import logging
 
 from hogwartsexceptions import MaraudersMapError, RowlingError, Messages
 
-from base import Room
-
 logger = logging.getLogger('Rowling')
 
 class Rowling(object):
-    ''' Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
-    Decides if user can do what they want.
-    Makes MaraudersMap change state if necessary.
-    Gives Legilimens a response.
-    should not contain instancemethods'''
+    """ Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
+        Decides if user can do what they want.
+        Makes MaraudersMap change state if necessary.
+        Gives Legilimens a response.
+        should not contain instancemethods
+    """
 
     # SHOULD MAYBE MOVE THIS TO JSON AND THEN IT'S ALL IN THE CASTLE
     # Below is sample commands and errors dicts
@@ -24,11 +23,12 @@ class Rowling(object):
 #               'can_look_in_room': "You can't see a thing."}
 
     def handle_command(self, castle, player_id, command):
-        '''Takes processed command from Legilimens.
-        Performs checks.
-        If command can be performed, passes it to MaraudersMap.
-        Otherwise, set response to appropriate error.
-        Passes response to Legilimens.'''
+        """ Takes processed command from Legilimens.
+            Performs checks.
+            If command can be performed, executes it.
+            Otherwise, set response to appropriate error.
+            Passes response to Legilimens.
+        """
         verb = command[0]
         args = command[1:]
         validity = True
