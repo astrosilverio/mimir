@@ -46,6 +46,7 @@ class Rowling(object):
 
         castle.transaction()
         try:
+            self.handle_auto_movements(castle)
             result = command.execute(args)
         except MaraudersMapError:
             castle.rollback()
