@@ -6,6 +6,7 @@ from hogwartsexceptions import LegilimensError, RowlingError, Messages
 from tests.fixtures import TestPlayer
 from tests.fixtures import TestCommand
 
+
 class TestLegilimens(unittest.TestCase):
 
     def setUp(self):
@@ -33,13 +34,13 @@ class TestLegilimens(unittest.TestCase):
         with self.assertRaises(LegilimensError):
             self.legilimens.process('dratted bloody thing')
 
-    @patch('Rowling.Rowling.handle_command')
+    @patch('Rowling.handle_command')
     def test_execute_without_error(self, mock_handle_command):
         mock_handle_command.return_value = 'Congratulations you took your wand'
         response = self.legilimens.execute('take wand')
         self.assertEqual(response, mock_handle_command.return_value)
 
-    @patch('Rowling.Rowling.handle_command')
+    @patch('Rowling.handle_command')
     def test_execute_with_logic_error(self, mock_handle_command):
         mock_handle_command.side_effect = RowlingError('BOOM!')
         response = self.legilimens.execute('take wand')

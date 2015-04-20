@@ -1,7 +1,8 @@
 from hogwartsexceptions import LegilimensError, RowlingError, MaraudersMapError, Messages
-from Rowling import Rowling
+import Rowling
 
 import re
+
 
 class Legilimens(object):
     """ Takes user input. Processes it into list of things user wants to do.
@@ -13,8 +14,7 @@ class Legilimens(object):
             JUST LINK THIS WITH A MARAUDERSMAP OBJECT
         """
         self.castle = castle
-        player = self.castle.add_player(username)
-        self.player_id = player.id
+        self.player = self.castle.add_player(username)
 
     def process(self, user_input):
         """ Takes user_input, processes it into an attempted command.
@@ -36,9 +36,8 @@ class Legilimens(object):
             legit_input = self.process(user_input)
             if legit_input[0] not in self.castle.commands.keys():
                 raise LegilimensError(Messages.UNKNOWN_VERB)
-            response = Rowling().handle_command(self.castle, self.player_id, legit_input)
+            response = Rowling.handle_command(self.castle, self.player, legit_input)
         except (LegilimensError, MaraudersMapError, RowlingError) as e:
             response = e.message
         finally:
             return response
-

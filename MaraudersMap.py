@@ -3,6 +3,7 @@ from AHistoryOfMagic import AHistoryOfMagic
 
 from base import Player
 
+
 class MaraudersMap(object):
     """ This contains STATE ONLY.
         Perhaps should have an associated log?
