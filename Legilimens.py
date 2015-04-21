@@ -35,7 +35,7 @@ class Legilimens(object):
         try:
             legit_input = self.process(user_input)
             if legit_input[0] not in self.castle.commands.keys():
-                raise LegilimensError(Messages.UNKNOWN_VERB)
+                raise LegilimensError(Messages.UNKNOWN_VERB.format(legit_input[0]))
             response = Rowling.handle_command(self.castle, self.player, legit_input)
         except (LegilimensError, MaraudersMapError, RowlingError) as e:
             response = e.message
