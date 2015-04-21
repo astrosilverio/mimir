@@ -1,18 +1,20 @@
+from hogwartsexceptions import RowlingError, Messages
+
+
 class Command(object):
     """ Holds logic for, well, commands.
-        For example, examine = Command(syntax=[thing], rules=[player_can_see], response=print_detail)
     """
-
     ##############################################################
     # Example ChangefulCommand and associated methods
     ##############################################################
 
-    # go = ChangefulCommand(syntax=[direction], rules=path_exists, state_changes=move_player)
+    # go = ChangefulCommand(syntax=[is_a_direction], rules=path_exists, state_changes=move_player)
 
+    # def is_a_direction(castle, word):
+    #     return word in castle.directions
+    #
     # def path_exists(castle, player):
-    #     if something:
-    #         return True
-    #     else:
+    #     if not <condition>:
     #         raise RowlingError(Messages.NO_PATH)
 
     # def move_player(castle, player, direction):
@@ -21,7 +23,8 @@ class Command(object):
     # def look(castle, player):
     #     pass
 
-    def __init__(self, syntax=None, rules=None, response=None):
+    def __init__(self, name=None, syntax=None, rules=None, response=None):
+        self.name = name
         self.syntax = syntax
         self.rules = rules
         self.response = response
@@ -32,16 +35,22 @@ class Command(object):
             * checks if command can be run
             * returns the correct response
         """
-        self.check_syntax(*args)
+        self.check_syntax(castle, *args)
         self.check_rules(castle, player)
         return self.calculate_response(castle, player)
 
-    def check_syntax(self, *args):
+    def check_syntax(self, castle, *args):
         """ Makes sure that the command has been called
             with the correct number of arguments
             and that the arguments are the right type.
         """
-        pass
+        if len(args) < len(self.syntax):
+            raise RowlingError(Messages.TOO_FEW_ARGS.format(self.name))
+        elif len(args) > len(self.syntax):
+            raise RowlingError(Messages.TOO_MANY_ARGS)
+
+        for arg, expected in zip(args, self.syntax):
+            expected(arg)
 
     def check_rules(self, castle, player):
         """ Calls the functions that check whether the command
@@ -60,8 +69,8 @@ class Command(object):
 
 
 class ChangefulCommand(Command):
-    def __init__(self, syntax=None, rules=None, state_changes=None, response=None):
-        super(ChangefulCommand, self).__init__(syntax, rules, response)
+    def __init__(self, name=None, syntax=None, rules=None, state_changes=None, response=None):
+        super(ChangefulCommand, self).__init__(name, syntax, rules, response)
         self.state_changes = state_changes
 
     def execute(self, castle, player, *args):
