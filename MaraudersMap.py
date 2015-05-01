@@ -1,5 +1,4 @@
 from hogwartsexceptions import MaraudersMapError
-from AHistoryOfMagic import AHistoryOfMagic
 
 from base import Player
 
@@ -17,7 +16,6 @@ class MaraudersMap(object):
             SOON
             PLEASE
         """
-        self.logbook = AHistoryOfMagic(init_state)
         self.build_from_json(init_state)
         self.name = name
 

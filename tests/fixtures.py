@@ -1,5 +1,7 @@
 from mock import MagicMock
 
+from Command import Command, ChangefulCommand
+
 from hogwartsexceptions import RowlingError
 
 
@@ -15,9 +17,14 @@ class TestRoom(object):
         self.name = name
 
 
+class TestCommand(object):
+    def __init__(self):
+        self.rules = []
+
+
 class Fixtures(object):
 
-    def setUp(self):
+    def create_stuff(self):
         room_one = MagicMock()
         room_one.__str__ = "You are in room one."
         room_two = MagicMock()
@@ -30,6 +37,9 @@ class Fixtures(object):
 
         self.player = MagicMock()
         self.player.location = room_one
+
+        self.look = Command(name='look', response=self._look)
+        self.go = ChangefulCommand(name='go', syntax=[self._is_a_direction], rules=[self._path_exists], state_changes=[self._move_player], response=self._look)
 
         self.castle.commands = {'look': self.look, 'go': self.go}
 
@@ -48,6 +58,5 @@ class Fixtures(object):
         new_location = player.location.paths[direction]
         player.location = new_location
 
-class TestCommand(object):
-    def __init__(self):
-        self.rules = []
+    def _look(self, castle, player):
+        return str(player.location)
