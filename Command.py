@@ -35,16 +35,13 @@ class Command(object):
             * checks if command can be run
             * returns the correct response
         """
-        try:
-            if self.syntax:
-                self.check_syntax(castle, *args)
-            if self.rules:
-                self.check_rules(castle, player, *args)
-            response = self.calculate_response(castle, player)
-        except RowlingError as e:
-            response = e.message
-        finally:
-            return response
+        if args and not self.syntax:
+            raise RowlingError(Messages.TOO_MANY_ARGS)
+        if self.syntax:
+            self.check_syntax(castle, *args)
+        if self.rules:
+            self.check_rules(castle, player, *args)
+        return self.calculate_response(castle, player)
 
     def check_syntax(self, castle, *args):
         """ Makes sure that the command has been called
@@ -84,17 +81,12 @@ class ChangefulCommand(Command):
         """ Same as above, except that it changes game state
             if checks pass.
         """
-        try:
-            if self.syntax:
-                self.check_syntax(castle, *args)
-            if self.rules:
-                self.check_rules(castle, player, *args)
-            self.change_state(castle, player, *args)
-            response = self.calculate_response(castle, player)
-        except RowlingError as e:
-            response = e.message
-        finally:
-            return response
+        if self.syntax:
+            self.check_syntax(castle, *args)
+        if self.rules:
+            self.check_rules(castle, player, *args)
+        self.change_state(castle, player, *args)
+        return self.calculate_response(castle, player)
 
     def change_state(self, castle, player, *args):
         """ Calls the functions that change castle state.

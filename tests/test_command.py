@@ -27,3 +27,29 @@ class TestCheckSyntax(unittest.TestCase, Fixtures):
     def test_correct_syntax_with_args(self):
         response = self.go.check_syntax(self.castle, 'n')
         self.assertEqual(response, None)
+
+
+class TestCheckRules(unittest.TestCase, Fixtures):
+
+    def setUp(self):
+        super(TestCheckRules, self).create_stuff()
+
+    def test_bad_rules_raises(self):
+        with self.assertRaises(RowlingError) as e:
+            self.go.check_rules(self.castle, self.player, 'e')
+        self.assertEqual(e.exception.message, self.path_error)
+
+    def test_good_rules_passes(self):
+        response = self.go.check_rules(self.castle, self.player, 'n')
+        self.assertEqual(response, None)
+
+
+class TestExecuteCommand(unittest.TestCase, Fixtures):
+
+    def setUp(self):
+        super(TestExecuteCommand, self).create_stuff()
+
+    def test_args_when_not_expected_raises(self):
+        with self.assertRaises(RowlingError) as e:
+            self.look.execute(self.castle, self.player, 'there')
+        self.assertEqual(e.exception.message, Messages.TOO_MANY_ARGS)
