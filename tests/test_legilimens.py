@@ -52,4 +52,4 @@ class TestLegilimens(unittest.TestCase):
 
     def test_execute_with_not_command(self):
         response = self.legilimens.execute('wand')
-        self.assertEqual(response, Messages.UNKNOWN_VERB)
+        self.assertEqual(response, Messages.UNKNOWN_VERB.format('wand'))
