@@ -13,7 +13,7 @@ class Command(object):
     # def is_a_direction(castle, word):
     #     return word in castle.directions
     #
-    # def path_exists(castle, player):
+    # def path_exists(castle, player, direction):
     #     if not <condition>:
     #         raise RowlingError(Messages.NO_PATH)
 
@@ -35,9 +35,16 @@ class Command(object):
             * checks if command can be run
             * returns the correct response
         """
-        self.check_syntax(castle, *args)
-        self.check_rules(castle, player)
-        return self.calculate_response(castle, player)
+        try:
+            if self.syntax:
+                self.check_syntax(castle, *args)
+            if self.rules:
+                self.check_rules(castle, player, *args)
+            response = self.calculate_response(castle, player)
+        except RowlingError as e:
+            response = e.message
+        finally:
+            return response
 
     def check_syntax(self, castle, *args):
         """ Makes sure that the command has been called
@@ -50,16 +57,16 @@ class Command(object):
             raise RowlingError(Messages.TOO_MANY_ARGS)
 
         for arg, expected in zip(args, self.syntax):
-            expected(arg)
+            expected(castle, arg)
 
-    def check_rules(self, castle, player):
+    def check_rules(self, castle, player, *args):
         """ Calls the functions that check whether the command
             can be executed.
 
             If one of the checks doesn't pass, the check will raise.
         """
         for check in self.rules:
-            check(castle, player)
+            check(castle, player, *args)
 
     def calculate_response(self, castle, player):
         """ Calls the function that formulates and formats
@@ -77,10 +84,17 @@ class ChangefulCommand(Command):
         """ Same as above, except that it changes game state
             if checks pass.
         """
-        self.check_syntax(*args)
-        self.check_rules(castle, player)
-        self.change_state(castle, player, *args)
-        return player.location.description
+        try:
+            if self.syntax:
+                self.check_syntax(castle, *args)
+            if self.rules:
+                self.check_rules(castle, player, *args)
+            self.change_state(castle, player, *args)
+            response = self.calculate_response(castle, player)
+        except RowlingError as e:
+            response = e.message
+        finally:
+            return response
 
     def change_state(self, castle, player, *args):
         """ Calls the functions that change castle state.
