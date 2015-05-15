@@ -53,3 +53,16 @@ class TestExecuteCommand(unittest.TestCase, Fixtures):
         with self.assertRaises(RowlingError) as e:
             self.look.execute(self.castle, self.player, 'there')
         self.assertEqual(e.exception.message, Messages.TOO_MANY_ARGS)
+
+    def test_successful_command_returns_desired_response(self):
+        response = self.look.execute(self.castle, self.player)
+        self.assertEqual(response, "You are in room one.")
+
+    def test_successful_changeful_command_changes_state(self):
+        response = self.go.execute(self.castle, self.player, 'n')
+        self.assertEqual(response, "You are in room two.")
+
+    def test_failed_changeful_command_does_not_change_state(self):
+        with self.assertRaises(RowlingError):
+            self.go.execute(self.castle, self.player, 'w')
+        self.assertEqual(self._look(self.castle, self.player), "You are in room one.")

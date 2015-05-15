@@ -1,4 +1,4 @@
-from mock import MagicMock
+from mock import Mock, MagicMock
 
 from Command import Command, ChangefulCommand
 
@@ -26,9 +26,9 @@ class Fixtures(object):
 
     def create_stuff(self):
         room_one = MagicMock()
-        room_one.__str__ = "You are in room one."
+        room_one.__str__ = Mock(return_value="You are in room one.")
         room_two = MagicMock()
-        room_two.__str__ = "You are in room two."
+        room_two.__str__ = Mock(return_value="You are in room two.")
         room_one.paths = {'n': room_two}
         room_two.paths = {'s': room_one}
 
