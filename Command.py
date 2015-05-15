@@ -8,7 +8,7 @@ class Command(object):
     # Example ChangefulCommand and associated methods
     ##############################################################
 
-    # go = ChangefulCommand(syntax=[is_a_direction], rules=path_exists, state_changes=move_player)
+    # go = ChangefulCommand(syntax=[is_a_direction], rules=[path_exists], state_changes=move_player, response=look)
 
     # def is_a_direction(castle, word):
     #     return word in castle.directions
@@ -18,12 +18,19 @@ class Command(object):
     #         raise RowlingError(Messages.NO_PATH)
 
     # def move_player(castle, player, direction):
-    #     pass
+    #     change player location
 
     # def look(castle, player):
-    #     pass
+    #     return player.location.description
 
     def __init__(self, name=None, syntax=None, rules=None, response=None):
+        """ Expected params:
+            * name -- the input string that will trigger this command
+            * syntax -- (optional) list containing validators for args;
+                        should be same length as expected number of args
+            * rules -- (optional) list containing methods that will check if command can be executed
+            * response -- (optional) method that composes response to player
+        """
         self.name = name
         self.syntax = syntax
         self.rules = rules
@@ -74,6 +81,14 @@ class Command(object):
 
 class ChangefulCommand(Command):
     def __init__(self, name=None, syntax=None, rules=None, state_changes=None, response=None):
+        """ Expected params:
+            * name -- the input string that will trigger this command
+            * syntax -- (optional) list containing validators for args;
+                        should be same length as expected number of args
+            * rules -- (optional) list containing methods that will check if command can be executed
+            * state_changes -- (optional) list containing methods that change game state
+            * response -- (optional) method that composes response to player
+        """
         super(ChangefulCommand, self).__init__(name, syntax, rules, response)
         self.state_changes = state_changes
 
@@ -89,7 +104,9 @@ class ChangefulCommand(Command):
         return self.calculate_response(castle, player)
 
     def change_state(self, castle, player, *args):
-        """ Calls the functions that change castle state.
+        """ Manages changes in castle state.
+            Wraps the state-changing methods in a transaction
+            and will roll state back if something goes wrong.
         """
         castle.start_transaction()
         try:

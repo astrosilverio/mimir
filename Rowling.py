@@ -4,23 +4,12 @@ from hogwartsexceptions import RowlingError, Messages
 
 logger = logging.getLogger('Rowling')
 
-
-""" Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
-    Decides if user can do what they want.
-    Makes MaraudersMap change state if necessary.
-    Gives Legilimens a response.
-    should not contain instancemethods
-"""
-
-# SHOULD MAYBE MOVE THIS TO JSON AND THEN IT'S ALL IN THE CASTLE
-# Below is sample commands and errors dicts
-
-# MAYBE IT'S TIME FOR COMMANDS TO BE OBJECTS
-
-#   commands = {'go': {'syntax': ['direction'], 'rules': ['path_exists', 'player_can_move'], 'state_changes': 'move_player'},
-#               'look': {'syntax': {'primary': [], 'alias-to': ['examine','noun']}, 'rules': ['can_look_in_room']}}
-#   errors = {'path_exists': "You can't go that way.", 'player_can_move': "You can't move right now.",
-#               'can_look_in_room': "You can't see a thing."}
+################################################################################################
+#    Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
+#    Decides if user can do what they want.
+#    Makes MaraudersMap change state if necessary.
+#    Gives Legilimens a response.
+################################################################################################
 
 
 def handle_command(self, castle, player, command):
