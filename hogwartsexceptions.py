@@ -24,3 +24,8 @@ class Messages(object):
     BAD_STATE_CHANGE = "I did something wrong, please try again."
     TOO_MANY_ARGS = "I'm not sure what you want me to do. Please use simpler commands."
     TOO_FEW_ARGS = "Where, when, or to what do you want me to {}?"
+
+    # Command syntax / rules errors
+    DIRECTION_ERROR = "I don't know how to go in that direction."
+    PATH_ERROR = "You can't go that way."
+    NOTHING_HAPPENS = "Nothing happens."
