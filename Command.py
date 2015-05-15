@@ -1,4 +1,4 @@
-from hogwartsexceptions import RowlingError, Messages
+from hogwartsexceptions import MaraudersMapError, RowlingError, Messages
 
 
 class Command(object):
@@ -91,5 +91,12 @@ class ChangefulCommand(Command):
     def change_state(self, castle, player, *args):
         """ Calls the functions that change castle state.
         """
-        for state_change in self.state_changes:
-            state_change(castle, player, *args)
+        castle.start_transaction()
+        try:
+            for state_change in self.state_changes:
+                state_change(castle, player, *args)
+        except MaraudersMapError:
+            castle.rollback()
+            raise RowlingError(Messages.BAD_STATE_CHANGE)
+        finally:
+            castle.commit()

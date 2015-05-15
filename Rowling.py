@@ -1,6 +1,6 @@
 import logging
 
-from hogwartsexceptions import MaraudersMapError, RowlingError, Messages
+from hogwartsexceptions import RowlingError, Messages
 
 logger = logging.getLogger('Rowling')
 
@@ -38,14 +38,8 @@ def handle_command(self, castle, player, command):
         logger.error("handle_command called from outside Legilimens.execute by player %s in game %s", player.id, castle.name)
         raise RowlingError(Messages.UNKNOWN_VERB)
 
-    castle.transaction()
-    try:
-        self.handle_auto_movements(castle)
-        result = command.execute(*args)
-    except MaraudersMapError:
-        castle.rollback()
-        raise RowlingError(Messages.BAD_STATE_CHANGE)
-    castle.commit()
+    self.handle_auto_movements(castle)
+    result = command.execute(castle, player, *args)
 
     return result if result else None
 
