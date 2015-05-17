@@ -1,10 +1,10 @@
 import unittest
 from mock import MagicMock, patch
 
+from base import Player
+from Command import Command
 from Legilimens import Legilimens
 from hogwartsexceptions import LegilimensError, RowlingError, Messages
-from tests.fixtures import TestPlayer
-from tests.fixtures import TestCommand
 
 
 class TestLegilimens(unittest.TestCase):
@@ -13,8 +13,8 @@ class TestLegilimens(unittest.TestCase):
         marauders_map_mock = MagicMock()
         marauders_map_mock.canonicals = ['take', 'wand']
         marauders_map_mock.noncanonicals = {'get': 'take'}
-        marauders_map_mock.commands = {'take': TestCommand()}
-        marauders_map_mock.add_player = lambda x: TestPlayer()
+        marauders_map_mock.commands = {'take': Command()}
+        marauders_map_mock.add_player = lambda x: Player(x)
 
         self.legilimens = Legilimens('zork', marauders_map_mock)
 

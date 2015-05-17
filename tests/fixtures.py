@@ -1,25 +1,9 @@
 from mock import Mock, MagicMock
 
+from base import Player
 from Command import Command, ChangefulCommand
 
 from hogwartsexceptions import RowlingError
-
-
-class TestPlayer(object):
-    def __init__(self, id=1, username='zork', location=None):
-        self.id = id
-        self.username = username
-        self.location = location
-
-
-class TestRoom(object):
-    def __init__(self, name):
-        self.name = name
-
-
-class TestCommand(object):
-    def __init__(self):
-        self.rules = []
 
 
 class Fixtures(object):
@@ -35,8 +19,7 @@ class Fixtures(object):
         self.castle = MagicMock()
         self.castle.directions = set(['n', 's', 'e', 'w'])
 
-        self.player = MagicMock()
-        self.player.location = room_one
+        self.player = Player('hermione', location=room_one)
 
         self.look = Command(name='look', response=self._look)
         self.go = ChangefulCommand(name='go', syntax=[self._is_a_direction], rules=[self._path_exists], state_changes=[self._move_player], response=self._look)
