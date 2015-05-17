@@ -2,10 +2,15 @@ from Command import Command, ChangefulCommand
 from hogwartsexceptions import RowlingError, Messages
 
 
-class BaseStatefulThing(object):
-    def __init__(self, description=None, inventory=None):
+class Player(object):
+    def __init__(self, username, description=None, inventory=None, location=None):
+        self.username = username
         self.description = description
-        self.inventory = inventory
+        self.inventory = inventory if inventory else []
+        self.location = location
+
+    def __repr__(self):
+        return self.username
 
     def __str__(self):
         return self.description
@@ -13,20 +18,34 @@ class BaseStatefulThing(object):
     def __contains__(self, thing):
         return thing in self.inventory
 
-class Player(object):
-    def __init__(self, id, username, description=None, inventory=None):
-        super(Player, self).__init__(description, inventory)
-        self.username = username
-        self.id = id
 
 class Room(object):
-    def __init__(self, description=None, inventory=None, paths=None):
-        super(Room, self).__init__(description, inventory)
-        self.paths = paths
+    def __init__(self, name, description=None, inventory=None, paths=None):
+        self.name = name
+        self.description = description
+        self.inventory = inventory if inventory else []
+        self.paths = paths if paths else {}
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.description
+
+    def __contains__(self, thing):
+        return thing in self.inventory
+
 
 class Thing(object):
-    def __init__(self, description=None, inventory=None):
-        super(Thing, self).__init__(description, inventory)
+    def __init__(self, name, description=None):
+        self.name = name
+        self.description = description
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.description
 
 
 def is_a_direction(castle, word):
@@ -46,13 +65,14 @@ def move_player(castle, player, direction):
     player.location = new_location
 
 
-def _look(castle, player):
+def location_description(castle, player):
     return str(player.location)
 
 
-look = Command(name='look', response=self._look)
-go = ChangefulCommand(name='go',
+look = Command(name='look', response=location_description)
+go = ChangefulCommand(
+    name='go',
     syntax=[is_a_direction],
     rules=[path_exists],
     state_changes=[move_player],
-    response=_look)
+    response=location_description)
