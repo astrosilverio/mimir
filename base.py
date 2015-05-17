@@ -1,11 +1,13 @@
+from collections import defaultdict
+import random
+
 from Command import Command, ChangefulCommand
 from hogwartsexceptions import RowlingError, Messages
 
 
 class Player(object):
-    def __init__(self, username, description=None, inventory=None, location=None):
+    def __init__(self, username, inventory=None, location=None):
         self.username = username
-        self.description = description
         self.inventory = inventory if inventory else []
         self.location = location
 
@@ -13,10 +15,14 @@ class Player(object):
         return self.username
 
     def __str__(self):
-        return self.description
+        return self.resting_description
 
     def __contains__(self, thing):
         return thing in self.inventory
+
+    @property
+    def resting_description(self):
+        return "{} is here.".format(repr(self))
 
 
 class Room(object):
@@ -30,22 +36,46 @@ class Room(object):
         return self.name
 
     def __str__(self):
-        return self.description
+        base_description = self.description
+        contents_descriptions = "\n".join([i.resting_description for i in self.inventory])
+        return "\n\n".join([base_description, contents_descriptions])
 
     def __contains__(self, thing):
         return thing in self.inventory
 
 
 class Thing(object):
-    def __init__(self, name, description=None):
+
+    ARTICLES = defaultdict(lambda: 'a')
+    ARTICLES['vowel'] = 'an'
+    ARTICLES['plural'] = 'some'
+    ARTICLES['proper'] = 'the'
+
+    VERB_ENDINGS = defaultdict(lambda: 's')
+    VERB_ENDINGS['plural'] = ''
+
+    RESTING_DESCRIPTORS = [
+        "{article} {noun} lie{verb_ending} on the ground here.",
+    ]
+
+    def __init__(self, name, description=None, word_type=None):
         self.name = name
         self.description = description
+        self.word_type = word_type
 
     def __repr__(self):
         return self.name
 
     def __str__(self):
         return self.description
+
+    @property
+    def resting_description(self):
+        descriptor = random.choice(self.RESTING_DESCRIPTORS)
+        return descriptor.format(
+            article=self.ARTICLES[self.word_type],
+            noun=repr(self),
+            verb_ending=self.VERB_ENDINGS[self.word_type])
 
 
 def is_a_direction(castle, word):
