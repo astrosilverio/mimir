@@ -8,11 +8,11 @@ from hogwartsexceptions import RowlingError, Messages
 class Player(object):
     def __init__(self, username, inventory=None, location=None):
         self.username = username
-        self.inventory = inventory if inventory else []
+        self.inventory = inventory if inventory else set()
         self.location = location
 
     def __repr__(self):
-        return self.username
+        return self.username.title()
 
     def __str__(self):
         return self.resting_description
@@ -29,11 +29,11 @@ class Room(object):
     def __init__(self, name, description=None, inventory=None, paths=None):
         self.name = name
         self.description = description
-        self.inventory = inventory if inventory else []
+        self.inventory = inventory if inventory else set()
         self.paths = paths if paths else {}
 
     def __repr__(self):
-        return self.name
+        return self.name.title()
 
     def __str__(self):
         base_description = self.description
@@ -73,7 +73,7 @@ class Thing(object):
     def resting_description(self):
         descriptor = random.choice(self.RESTING_DESCRIPTORS)
         return descriptor.format(
-            article=self.ARTICLES[self.word_type],
+            article=self.ARTICLES[self.word_type].title(),
             noun=repr(self),
             verb_ending=self.VERB_ENDINGS[self.word_type])
 

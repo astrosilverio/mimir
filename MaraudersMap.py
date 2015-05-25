@@ -5,19 +5,21 @@ from base import Player
 
 class MaraudersMap(object):
     """ This contains STATE ONLY.
-        Perhaps should have an associated log?
     """
 
-    def __init__(self, name, init_state):
+    def __init__(self, init_state=None):
         """ Make initial state from JSON.
-            Need helper functions to build from JSON.
             Set up log.
-            WRITE JSON SHIT
-            SOON
-            PLEASE
         """
-        self.build_from_json(init_state)
-        self.name = name
+        if init_state:
+            self.build_from_json(init_state)
+        else:
+            self.directions = set()
+            self.rooms = {}
+            self.players = {}
+            self.things = {}
+            self.commands = {}
+
 
     def build_from_json(self, state):
         """ json.load or json.loads will probably do the trick here.
