@@ -36,9 +36,8 @@ class Room(object):
         return self.name.title()
 
     def __str__(self):
-        base_description = self.description
         contents_descriptions = "\n".join([i.resting_description for i in self.inventory])
-        return "\n\n".join([base_description, contents_descriptions])
+        return "\n\n".join([self.description, contents_descriptions])
 
     def __contains__(self, thing):
         return thing in self.inventory
