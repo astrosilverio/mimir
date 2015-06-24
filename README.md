@@ -12,7 +12,7 @@ My goal is to write a system that can be used to write and run text adventures. 
 
 Part of this project, therefore, is an engine that can do those things for arbitrary game data.
 
-I recently gave a talk on how text adventures / text adventure frameworks work at Open Source Bridge. Transcript of the talk will go up on [my blog] (http://astrosilverio.tumblr.com/) soon; I'd suggest reading that if you really want to know what's going on.
+I recently gave a talk on how text adventures / text adventure frameworks work at Open Source Bridge. A rough transcript of the talk is up on [my blog] (http://astrosilverio.tumblr.com/); I'd suggest reading that if you really want to know what's going on.
 
 Besides the engine, the framework should have an API to make gamemaking easy.
 
