@@ -11,7 +11,7 @@ class LogicError(Exception):
     pass
 
 
-class LegilimensError(Exception):
+class ParserError(Exception):
     """ These are for weird input I don't understand.
     """
     pass

@@ -20,7 +20,7 @@ Besides the engine, the framework should have an API to make gamemaking easy.
 
 Core bits of the engine are in these files:
 
-* Parser: `Legilimens.py`
+* Parser: `Parser.py`
 * Logic Handler: `LogicHandler.py`
 * Command class: `Command.py`
 * Main state holder: `MaraudersMap.py`
