@@ -1,10 +1,10 @@
 from Legilimens import Legilimens
-from MaraudersMap import MaraudersMap
+from StateManager import StateManager
 from Command import Command
 from pycallgraph import PyCallGraph, Config, GlobbingFilter
 from pycallgraph.output import GraphvizOutput, GephiOutput
 
-hogwarts = MaraudersMap('init_state_not_usable_yet')
+hogwarts = StateManager('init_state_not_usable_yet')
 hogwarts.canonicals = ['look']
 look = Command(rules=['can_look_in_room'])
 hogwarts.commands = {'look': look}

@@ -23,7 +23,7 @@ Core bits of the engine are in these files:
 * Parser: `Parser.py`
 * Logic Handler: `LogicHandler.py`
 * Command class: `Command.py`
-* Main state holder: `MaraudersMap.py`
+* Main state holder: `StateManager.py`
 * Base stateful classes (`Player`, `Room`, `Thing`): `base.py`
 
 ### Project status

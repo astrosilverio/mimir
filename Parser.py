@@ -1,4 +1,4 @@
-from hogwartsexceptions import ParserError, LogicError, MaraudersMapError, Messages
+from hogwartsexceptions import ParserError, LogicError, StateError, Messages
 import LogicHandler
 
 import re
@@ -10,8 +10,8 @@ class Parser(object):
     """
 
     def __init__(self, username, castle):
-        """ ALL INFO ABOUT DATA STORED IN MARAUDERSMAP
-            JUST LINK THIS WITH A MARAUDERSMAP OBJECT
+        """ ALL INFO ABOUT DATA STORED IN StateManager
+            JUST LINK THIS WITH A StateManager OBJECT
         """
         self.castle = castle
         self.player = self.castle.add_player(username)
@@ -37,7 +37,7 @@ class Parser(object):
             if legit_input[0] not in self.castle.commands.keys():
                 raise ParserError(Messages.UNKNOWN_VERB.format(legit_input[0]))
             response = LogicHandler.handle_command(self.castle, self.player, legit_input)
-        except (ParserError, MaraudersMapError, LogicError) as e:
+        except (ParserError, StateError, LogicError) as e:
             response = e.message
         finally:
             return response

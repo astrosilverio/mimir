@@ -1,4 +1,4 @@
-from hogwartsexceptions import MaraudersMapError, LogicError, Messages
+from hogwartsexceptions import StateError, LogicError, Messages
 
 
 class Command(object):
@@ -112,7 +112,7 @@ class ChangefulCommand(Command):
         try:
             for state_change in self.state_changes:
                 state_change(castle, player, *args)
-        except MaraudersMapError:
+        except StateError:
             castle.rollback()
             raise LogicError(Messages.BAD_STATE_CHANGE)
         finally:

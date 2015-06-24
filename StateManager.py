@@ -1,9 +1,9 @@
-from hogwartsexceptions import MaraudersMapError
+from hogwartsexceptions import StateError
 
 from base import Player
 
 
-class MaraudersMap(object):
+class StateManager(object):
     """ This contains STATE ONLY.
         Perhaps should have an associated log?
     """

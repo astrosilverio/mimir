@@ -1,4 +1,4 @@
-class MaraudersMapError(Exception):
+class StateError(Exception):
     """ Should hopefully not get many of these, can't figure out where I'd need them.
     """
     pass

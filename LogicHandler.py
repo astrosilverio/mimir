@@ -7,7 +7,7 @@ logger = logging.getLogger('LogicHandler')
 ################################################################################################
 #    Recieves from Parser what the user wants to do, who user is, which castle they're in.
 #    Decides if user can do what they want.
-#    Makes MaraudersMap change state if necessary.
+#    Makes StateManager change state if necessary.
 #    Gives Parser a response.
 ################################################################################################
 
