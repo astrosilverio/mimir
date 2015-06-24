@@ -4,7 +4,7 @@ class MaraudersMapError(Exception):
     pass
 
 
-class RowlingError(Exception):
+class LogicError(Exception):
     """ These should be if user is trying to do something they can't,
         like go north from a room with one path to the south.
     """

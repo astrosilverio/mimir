@@ -2,7 +2,7 @@ import unittest
 from mock import MagicMock, patch
 
 from Legilimens import Legilimens
-from hogwartsexceptions import LegilimensError, RowlingError, Messages
+from hogwartsexceptions import LegilimensError, LogicError, Messages
 from tests.fixtures import TestPlayer
 from tests.fixtures import TestCommand
 
@@ -34,15 +34,15 @@ class TestLegilimens(unittest.TestCase):
         with self.assertRaises(LegilimensError):
             self.legilimens.process('dratted bloody thing')
 
-    @patch('Rowling.handle_command')
+    @patch('LogicHandler.handle_command')
     def test_execute_without_error(self, mock_handle_command):
         mock_handle_command.return_value = 'Congratulations you took your wand'
         response = self.legilimens.execute('take wand')
         self.assertEqual(response, mock_handle_command.return_value)
 
-    @patch('Rowling.handle_command')
+    @patch('LogicHandler.handle_command')
     def test_execute_with_logic_error(self, mock_handle_command):
-        mock_handle_command.side_effect = RowlingError('BOOM!')
+        mock_handle_command.side_effect = LogicError('BOOM!')
         response = self.legilimens.execute('take wand')
         self.assertEqual(response, 'BOOM!')
 

@@ -30,7 +30,7 @@ class MaraudersMap(object):
         pass
 
     def update_state(self, state_change):
-        """ Changes state by state_change that are vetted in the Rowling.
+        """ Changes state by state_change that are vetted in the LogicHandler.
             Need helper functions to manage state change.
         """
         pass

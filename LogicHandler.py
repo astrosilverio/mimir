@@ -1,8 +1,8 @@
 import logging
 
-from hogwartsexceptions import RowlingError, Messages
+from hogwartsexceptions import LogicError, Messages
 
-logger = logging.getLogger('Rowling')
+logger = logging.getLogger('LogicHandler')
 
 ################################################################################################
 #    Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
@@ -25,7 +25,7 @@ def handle_command(self, castle, player, command):
     if not command:
         # if handle_command is called by Legilimens, we'll never see this
         logger.error("handle_command called from outside Legilimens.execute by player %s in game %s", player.id, castle.name)
-        raise RowlingError(Messages.UNKNOWN_VERB)
+        raise LogicError(Messages.UNKNOWN_VERB)
 
     self.handle_auto_movements(castle)
     result = command.execute(castle, player, *args)
