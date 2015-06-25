@@ -18,13 +18,15 @@ Besides the engine, the framework should have an API to make gamemaking easy.
 
 ### Navigating this repo
 
-Core bits of the engine are in these files:
+Core bits of the engine are in the `engine` directory in these files:
 
 * Parser: `Parser.py`
 * Logic Handler: `LogicHandler.py`
 * Command class: `Command.py`
 * Main state holder: `StateManager.py`
 * Base stateful classes (`Player`, `Room`, `Thing`): `base.py`
+
+`AHistoryOfMagic.py` is a primitive attempt at a log that I will probably get rid of.
 
 ### Project status
 
@@ -34,9 +36,7 @@ I'm mostly happy with parsing and logic (for now). I'm *not* happy with having o
 
 ### Immediate To-Do
 
-* Abstract Harry Potter out of file/class names
 * Open a pull request for base stateful classes
-* Revamp file structure
 * Implement better stateful class system using ECS
 
 ## Prerequisites
