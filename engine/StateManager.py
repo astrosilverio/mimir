@@ -1,4 +1,4 @@
-from hogwartsexceptions import StateError
+from engine.exceptions import StateError
 
 from base import Player
 

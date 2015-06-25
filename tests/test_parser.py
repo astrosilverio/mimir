@@ -1,8 +1,8 @@
 import unittest
 from mock import MagicMock, patch
 
-from Parser import Parser
-from hogwartsexceptions import ParserError, LogicError, Messages
+from engine.Parser import Parser
+from engine.exceptions import ParserError, LogicError, Messages
 from tests.fixtures import TestPlayer
 from tests.fixtures import TestCommand
 
@@ -34,13 +34,13 @@ class TestParser(unittest.TestCase):
         with self.assertRaises(ParserError):
             self.parser.process('dratted bloody thing')
 
-    @patch('LogicHandler.handle_command')
+    @patch('engine.LogicHandler.handle_command')
     def test_execute_without_error(self, mock_handle_command):
         mock_handle_command.return_value = 'Congratulations you took your wand'
         response = self.parser.execute('take wand')
         self.assertEqual(response, mock_handle_command.return_value)
 
-    @patch('LogicHandler.handle_command')
+    @patch('engine.LogicHandler.handle_command')
     def test_execute_with_logic_error(self, mock_handle_command):
         mock_handle_command.side_effect = LogicError('BOOM!')
         response = self.parser.execute('take wand')

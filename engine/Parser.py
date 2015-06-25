@@ -1,4 +1,4 @@
-from hogwartsexceptions import ParserError, LogicError, StateError, Messages
+from engine.exceptions import ParserError, LogicError, StateError, Messages
 import LogicHandler
 
 import re

@@ -1,6 +1,6 @@
 import logging
 
-from hogwartsexceptions import LogicError, Messages
+from engine.exceptions import LogicError, Messages
 
 logger = logging.getLogger('LogicHandler')
 

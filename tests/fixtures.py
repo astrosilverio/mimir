@@ -1,8 +1,8 @@
 from mock import Mock, MagicMock
 
-from Command import Command, ChangefulCommand
+from engine.Command import Command, ChangefulCommand
 
-from hogwartsexceptions import LogicError
+from engine.exceptions import LogicError
 
 
 class TestPlayer(object):

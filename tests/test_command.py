@@ -1,6 +1,6 @@
 import unittest
 
-from hogwartsexceptions import Messages, LogicError
+from engine.exceptions import Messages, LogicError
 from tests.fixtures import Fixtures
 
 
