@@ -1,9 +1,9 @@
-from hogwartsexceptions import MaraudersMapError
+from engine.exceptions import StateError
 
 from base import Player
 
 
-class MaraudersMap(object):
+class StateManager(object):
     """ This contains STATE ONLY.
     """
 
@@ -32,7 +32,7 @@ class MaraudersMap(object):
         pass
 
     def update_state(self, state_change):
-        """ Changes state by state_change that are vetted in the Rowling.
+        """ Changes state by state_change that are vetted in the LogicHandler.
             Need helper functions to manage state change.
         """
         pass

@@ -1,4 +1,4 @@
-from hogwartsexceptions import MaraudersMapError, RowlingError, Messages
+from engine.exceptions import StateError, LogicError, Messages
 
 
 class Command(object):
@@ -15,7 +15,7 @@ class Command(object):
     #
     # def path_exists(castle, player, direction):
     #     if not <condition>:
-    #         raise RowlingError(Messages.NO_PATH)
+    #         raise LogicError(Messages.NO_PATH)
 
     # def move_player(castle, player, direction):
     #     change player location
@@ -37,13 +37,13 @@ class Command(object):
         self.response = response
 
     def execute(self, castle, player, *args):
-        """ Called by Rowling. Does three things:
+        """ Called by LogicHandler. Does three things:
             * makes sure command syntax is correct
             * checks if command can be run
             * returns the correct response
         """
         if args and not self.syntax:
-            raise RowlingError(Messages.TOO_MANY_ARGS)
+            raise LogicError(Messages.TOO_MANY_ARGS)
         if self.syntax:
             self.check_syntax(castle, *args)
         if self.rules:
@@ -56,9 +56,9 @@ class Command(object):
             and that the arguments are the right type.
         """
         if len(args) < len(self.syntax):
-            raise RowlingError(Messages.TOO_FEW_ARGS.format(self.name))
+            raise LogicError(Messages.TOO_FEW_ARGS.format(self.name))
         elif len(args) > len(self.syntax):
-            raise RowlingError(Messages.TOO_MANY_ARGS)
+            raise LogicError(Messages.TOO_MANY_ARGS)
 
         for arg, expected in zip(args, self.syntax):
             expected(castle, arg)
@@ -112,8 +112,8 @@ class ChangefulCommand(Command):
         try:
             for state_change in self.state_changes:
                 state_change(castle, player, *args)
-        except MaraudersMapError:
+        except StateError:
             castle.rollback()
-            raise RowlingError(Messages.BAD_STATE_CHANGE)
+            raise LogicError(Messages.BAD_STATE_CHANGE)
         finally:
             castle.commit()

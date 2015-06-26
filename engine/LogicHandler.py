@@ -1,31 +1,31 @@
 import logging
 
-from hogwartsexceptions import RowlingError, Messages
+from engine.exceptions import LogicError, Messages
 
-logger = logging.getLogger('Rowling')
+logger = logging.getLogger('LogicHandler')
 
 ################################################################################################
-#    Recieves from Legilimens what the user wants to do, who user is, which castle they're in.
+#    Recieves from Parser what the user wants to do, who user is, which castle they're in.
 #    Decides if user can do what they want.
-#    Makes MaraudersMap change state if necessary.
-#    Gives Legilimens a response.
+#    Makes StateManager change state if necessary.
+#    Gives Parser a response.
 ################################################################################################
 
 
 def handle_command(self, castle, player, command):
-    """ Takes processed command from Legilimens.
+    """ Takes processed command from Parser.
         Performs checks.
         If command can be performed, executes it.
         Otherwise, set response to appropriate error.
-        Passes response to Legilimens.
+        Passes response to Parser.
     """
     verb = command[0]
     args = command[1:]
     command = castle.commands.get(verb, None)
     if not command:
-        # if handle_command is called by Legilimens, we'll never see this
-        logger.error("handle_command called from outside Legilimens.execute by player %s in game %s", player.id, castle.name)
-        raise RowlingError(Messages.UNKNOWN_VERB)
+        # if handle_command is called by Parser, we'll never see this
+        logger.error("handle_command called from outside Parser.execute by player %s in game %s", player.id, castle.name)
+        raise LogicError(Messages.UNKNOWN_VERB)
 
     self.handle_auto_movements(castle)
     result = command.execute(castle, player, *args)

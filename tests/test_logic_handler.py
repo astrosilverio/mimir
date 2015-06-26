@@ -1,5 +1,6 @@
 import unittest
 
+
 class TestHandleCommand(unittest.TestCase):
 
     def test_hc_calls_correct_checks(self):
@@ -17,7 +18,8 @@ class TestHandleCommand(unittest.TestCase):
     def test_hc_returns_sane_output_if_checks_fail(self):
         pass
 
-class TestLegilimensIntegration(unittest.TestCase):
+
+class TestParserIntegration(unittest.TestCase):
 
     def test_good_simple_command_returns_sane_output(self):
         pass
@@ -30,6 +32,7 @@ class TestLegilimensIntegration(unittest.TestCase):
 
     def test_bad_complex_command_returns_sane_output(self):
         pass
+
 
 class TestStateIntegration(unittest.TestCase):
 

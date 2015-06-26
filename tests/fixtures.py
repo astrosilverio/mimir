@@ -1,9 +1,8 @@
 from mock import Mock, MagicMock
 
-from base import Player
-from Command import Command, ChangefulCommand
-
-from hogwartsexceptions import RowlingError
+from engine.base import Player
+from engine.Command import Command, ChangefulCommand
+from engine.exceptions import LogicError
 
 
 class Fixtures(object):
@@ -31,11 +30,11 @@ class Fixtures(object):
 
     def _is_a_direction(self, castle, word):
         if word not in castle.directions:
-            raise RowlingError(self.direction_error)
+            raise LogicError(self.direction_error)
 
     def _path_exists(self, castle, player, direction):
         if direction not in player.location.paths:
-            raise RowlingError(self.path_error)
+            raise LogicError(self.path_error)
 
     def _move_player(self, castle, player, direction):
         new_location = player.location.paths[direction]

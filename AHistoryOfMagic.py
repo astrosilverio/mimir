@@ -10,7 +10,7 @@ class AHistoryOfMagic(object):
 		''' Adds an entry to the log.
 		player is the player_id of player giving input,
 		user_input is raw input,
-		interpreted command is the command + args that Legilimens thinks happened,
+		interpreted command is the command + args that the parser thinks happened,
 		success if True if command succeeds and False if it fails,
 		state_diff is dict of state changes,
 		response is the response returned to user.'''
