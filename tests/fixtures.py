@@ -2,6 +2,7 @@ from mock import Mock, MagicMock
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
+from engine.StateManager import StateManager
 
 
 class TestPlayer(object):
@@ -31,7 +32,7 @@ class CommandTestBase(object):
         room_one.paths = {'n': room_two}
         room_two.paths = {'s': room_one}
 
-        self.castle = MagicMock()
+        self.castle = StateManager('commandtest', 'initstate')
         self.castle.directions = set(['n', 's', 'e', 'w'])
 
         self.player = MagicMock()
@@ -41,6 +42,8 @@ class CommandTestBase(object):
         self.go = ChangefulCommand(name='go', syntax=[self._is_a_direction], rules=[self._path_exists], state_changes=[self._move_player], response=self._look)
 
         self.castle.commands = {'look': self.look, 'go': self.go}
+        self.castle.canonicals = set(['look', 'go', 'n', 'e', 'w', 's'])
+        self.castle.noncanonicals = {'north': 'n', 'east': 'e', 'west': 'w', 'south': 's'}
 
         self.direction_error = "I don't know how to go that direction."
         self.path_error = "You can't go that way."
