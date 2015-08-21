@@ -9,12 +9,12 @@ class Parser(object):
         Gets response from LogicHandler. Gives response back to user.
     """
 
-    def __init__(self, username, castle):
+    def __init__(self, player, castle):
         """ ALL INFO ABOUT DATA STORED IN StateManager
             JUST LINK THIS WITH A StateManager OBJECT
         """
         self.castle = castle
-        self.player = self.castle.add_player(username)
+        self.player = player
 
     def process(self, user_input):
         """ Takes user_input, processes it into an attempted command.

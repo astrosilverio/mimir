@@ -2,8 +2,9 @@ import unittest
 from mock import patch
 
 from engine.Command import ChangefulCommand
-from engine.exceptions import LogicError
+from engine.exceptions import LogicError, Messages
 from engine.LogicHandler import handle_command
+from engine.Parser import Parser
 from tests.fixtures import CommandTestBase
 
 
@@ -28,19 +29,27 @@ class TestHandleCommand(unittest.TestCase, CommandTestBase):
         self.assertEqual(e.exception.message, "You can't go that way.")
 
 
-class TestParserIntegration(unittest.TestCase):
+class TestParserIntegration(unittest.TestCase, CommandTestBase):
+
+    def setUp(self):
+        super(TestParserIntegration, self).create_stuff()
+        self.parser = Parser(self.player, self.castle)
 
     def test_good_simple_input_returns_sane_output(self):
-        pass
+        response = self.parser.execute("look")
+        self.assertEqual(response, "You are in room one.")
 
     def test_bad_simple_input_returns_sane_output(self):
-        pass
+        response = self.parser.execute("look n")
+        self.assertEqual(response, Messages.TOO_MANY_ARGS)
 
     def test_good_complex_input_returns_sane_output(self):
-        pass
+        response = self.parser.execute("go n")
+        self.assertEqual(response, "You are in room two.")
 
     def test_bad_complex_input_returns_sane_output(self):
-        pass
+        response = self.parser.execute("go e")
+        self.assertEqual(response, self.path_error)
 
 
 class TestStateIntegration(unittest.TestCase):
