@@ -12,7 +12,7 @@ logger = logging.getLogger('LogicHandler')
 ################################################################################################
 
 
-def handle_command(self, castle, player, command):
+def handle_command(castle, player, command):
     """ Takes processed command from Parser.
         Performs checks.
         If command can be performed, executes it.
@@ -27,13 +27,13 @@ def handle_command(self, castle, player, command):
         logger.error("handle_command called from outside Parser.execute by player %s in game %s", player.id, castle.name)
         raise LogicError(Messages.UNKNOWN_VERB)
 
-    self.handle_auto_movements(castle)
+    handle_auto_movements(castle)
     result = command.execute(castle, player, *args)
 
     return result if result else None
 
 
-def handle_auto_movements(self, castle):
+def handle_auto_movements(castle):
     """ Runs automated logic after every turn.
         Use to, e.g., release the basilisk at turn #100.
     """
