@@ -1,7 +1,6 @@
 from mock import Mock, MagicMock
 
 from engine.Command import Command, ChangefulCommand
-
 from engine.exceptions import LogicError
 
 
@@ -22,7 +21,7 @@ class TestCommand(object):
         self.rules = []
 
 
-class Fixtures(object):
+class CommandTestBase(object):
 
     def create_stuff(self):
         room_one = MagicMock()
