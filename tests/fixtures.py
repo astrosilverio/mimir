@@ -25,18 +25,18 @@ class TestCommand(object):
 class CommandTestBase(object):
 
     def create_stuff(self):
-        room_one = MagicMock()
-        room_one.__str__ = Mock(return_value="You are in room one.")
-        room_two = MagicMock()
-        room_two.__str__ = Mock(return_value="You are in room two.")
-        room_one.paths = {'n': room_two}
-        room_two.paths = {'s': room_one}
+        self.room_one = MagicMock()
+        self.room_one.__str__ = Mock(return_value="You are in room one.")
+        self.room_two = MagicMock()
+        self.room_two.__str__ = Mock(return_value="You are in room two.")
+        self.room_one.paths = {'n': self.room_two}
+        self.room_two.paths = {'s': self.room_one}
 
         self.castle = StateManager('commandtest', 'initstate')
         self.castle.directions = set(['n', 's', 'e', 'w'])
 
         self.player = MagicMock()
-        self.player.location = room_one
+        self.player.location = self.room_one
 
         self.look = Command(name='look', response=self._look)
         self.go = ChangefulCommand(name='go', syntax=[self._is_a_direction], rules=[self._path_exists], state_changes=[self._move_player], response=self._look)

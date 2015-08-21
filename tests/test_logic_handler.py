@@ -52,10 +52,20 @@ class TestParserIntegration(unittest.TestCase, CommandTestBase):
         self.assertEqual(response, self.path_error)
 
 
-class TestStateIntegration(unittest.TestCase):
+class TestStateIntegration(unittest.TestCase, CommandTestBase):
 
-    def test_hc_state_changing_command_changes_state(self):
-        pass
+    def setUp(self):
+        super(TestStateIntegration, self).create_stuff()
+
+    def test_hc_state_changing_command_success_changes_state(self):
+        handle_command(self.castle, self.player, ['go', 'n'])
+        self.assertEqual(self.player.location, self.room_two)
+
+    def test_hc_state_changing_command_failure_does_not_change_state(self):
+        with self.assertRaises(LogicError):
+            handle_command(self.castle, self.player, ['go', 's'])
+        self.assertEqual(self.player.location, self.room_one)
 
     def test_hc_non_state_changing_command_does_not_change_state(self):
-        pass
+        handle_command(self.castle, self.player, ['look'])
+        self.assertEqual(self.player.location, self.room_one)
