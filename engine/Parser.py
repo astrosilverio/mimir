@@ -17,8 +17,7 @@ class Parser(object):
         self.player = player
 
     def process(self, user_input):
-        """ Takes user_input, processes it into an attempted command.
-        """
+        """Takes user_input, processes it into an attempted command."""
         words = user_input.split()
         words = [re.sub('\W+', '', word) for word in words]
         words = [word if (word in self.castle.canonicals) else self.castle.noncanonicals.get(word, None) for word in words]
@@ -30,8 +29,7 @@ class Parser(object):
         return words
 
     def execute(self, user_input):
-        """ Gives processed user input to LogicHandler, gets response.
-        """
+        """Gives processed user input to LogicHandler, gets response."""
         try:
             legit_input = self.process(user_input)
             if legit_input[0] not in self.castle.commands.keys():
