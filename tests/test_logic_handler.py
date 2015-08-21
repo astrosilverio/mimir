@@ -69,3 +69,30 @@ class TestStateIntegration(unittest.TestCase, CommandTestBase):
     def test_hc_non_state_changing_command_does_not_change_state(self):
         handle_command(self.castle, self.player, ['look'])
         self.assertEqual(self.player.location, self.room_one)
+
+
+class TestFullIntegration(unittest.TestCase, CommandTestBase):
+
+    def setUp(self):
+        super(TestFullIntegration, self).create_stuff()
+        self.parser = Parser(self.player, self.castle)
+
+    def test_good_simple_input_returns_sane_output(self):
+        response = self.parser.execute("look")
+        self.assertEqual(response, "You are in room one.")
+        self.assertEqual(self.player.location, self.room_one)
+
+    def test_bad_simple_input_returns_sane_output(self):
+        response = self.parser.execute("look n")
+        self.assertEqual(response, Messages.TOO_MANY_ARGS)
+        self.assertEqual(self.player.location, self.room_one)
+
+    def test_good_complex_input_returns_sane_output(self):
+        response = self.parser.execute("go n")
+        self.assertEqual(response, "You are in room two.")
+        self.assertEqual(self.player.location, self.room_two)
+
+    def test_bad_complex_input_returns_sane_output(self):
+        response = self.parser.execute("go e")
+        self.assertEqual(response, self.path_error)
+        self.assertEqual(self.player.location, self.room_one)
