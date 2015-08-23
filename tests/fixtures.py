@@ -1,8 +1,8 @@
 from mock import Mock, MagicMock
 
 from engine.Command import Command, ChangefulCommand
-
 from engine.exceptions import LogicError
+from engine.StateManager import StateManager
 
 
 class TestPlayer(object):
@@ -22,26 +22,28 @@ class TestCommand(object):
         self.rules = []
 
 
-class Fixtures(object):
+class CommandTestBase(object):
 
     def create_stuff(self):
-        room_one = MagicMock()
-        room_one.__str__ = Mock(return_value="You are in room one.")
-        room_two = MagicMock()
-        room_two.__str__ = Mock(return_value="You are in room two.")
-        room_one.paths = {'n': room_two}
-        room_two.paths = {'s': room_one}
+        self.room_one = MagicMock()
+        self.room_one.__str__ = Mock(return_value="You are in room one.")
+        self.room_two = MagicMock()
+        self.room_two.__str__ = Mock(return_value="You are in room two.")
+        self.room_one.paths = {'n': self.room_two}
+        self.room_two.paths = {'s': self.room_one}
 
-        self.castle = MagicMock()
+        self.castle = StateManager('commandtest', 'initstate')
         self.castle.directions = set(['n', 's', 'e', 'w'])
 
         self.player = MagicMock()
-        self.player.location = room_one
+        self.player.location = self.room_one
 
         self.look = Command(name='look', response=self._look)
         self.go = ChangefulCommand(name='go', syntax=[self._is_a_direction], rules=[self._path_exists], state_changes=[self._move_player], response=self._look)
 
         self.castle.commands = {'look': self.look, 'go': self.go}
+        self.castle.canonicals = set(['look', 'go', 'n', 'e', 'w', 's'])
+        self.castle.noncanonicals = {'north': 'n', 'east': 'e', 'west': 'w', 'south': 's'}
 
         self.direction_error = "I don't know how to go that direction."
         self.path_error = "You can't go that way."

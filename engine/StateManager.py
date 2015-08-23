@@ -16,7 +16,7 @@ class StateManager(object):
             SOON
             PLEASE
         """
-        self.build_from_json(init_state)
+        # self.build_from_json(init_state)
         self.name = name
 
     def build_from_json(self, state):
@@ -41,7 +41,7 @@ class StateManager(object):
         """
         return Player(username)
 
-    def transaction(self):
+    def start_transaction(self):
         pass
 
     def rollback(self):

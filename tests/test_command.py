@@ -1,10 +1,10 @@
 import unittest
 
 from engine.exceptions import Messages, LogicError
-from tests.fixtures import Fixtures
+from tests.fixtures import CommandTestBase
 
 
-class TestCheckSyntax(unittest.TestCase, Fixtures):
+class TestCheckSyntax(unittest.TestCase, CommandTestBase):
 
     def setUp(self):
         super(TestCheckSyntax, self).create_stuff()
@@ -29,7 +29,7 @@ class TestCheckSyntax(unittest.TestCase, Fixtures):
         self.assertEqual(response, None)
 
 
-class TestCheckRules(unittest.TestCase, Fixtures):
+class TestCheckRules(unittest.TestCase, CommandTestBase):
 
     def setUp(self):
         super(TestCheckRules, self).create_stuff()
@@ -44,7 +44,7 @@ class TestCheckRules(unittest.TestCase, Fixtures):
         self.assertEqual(response, None)
 
 
-class TestExecuteCommand(unittest.TestCase, Fixtures):
+class TestExecuteCommand(unittest.TestCase, CommandTestBase):
 
     def setUp(self):
         super(TestExecuteCommand, self).create_stuff()
