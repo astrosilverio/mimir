@@ -16,11 +16,19 @@ class Parser(object):
         self.castle = castle
         self.player = player
 
+    def _is_number(self, word):
+        try:
+            int(word)
+        except ValueError:
+            return False
+        else:
+            return True
+
     def process(self, user_input):
         """Takes user_input, processes it into an attempted command."""
         words = user_input.split()
         words = [re.sub('\W+', '', word) for word in words]
-        words = [word if (word in self.castle.canonicals) else self.castle.noncanonicals.get(word, None) for word in words]
+        words = [word if ((word in self.castle.canonicals) or self._is_number(word)) else self.castle.noncanonicals.get(word, None) for word in words]
         words = [word for word in words if word is not None]
 
         if not words:

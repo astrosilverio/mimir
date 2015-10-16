@@ -26,7 +26,7 @@ class TestCommand(object):
 
 class Description(Component):
 
-    def __init__(self, description):
+    def __init__(self, description=None):
         self.description = description
 
 
@@ -53,8 +53,8 @@ class Container(Component):
     def put_down(self, thing):
         self._inventory.remove(thing)
 
-    def __str__(self):
-        return '\n'.join(self.inventory)
+    def print_inventory(self):
+        return '\n'.join([thing.name for thing in self.inventory])
 
 
 class Location(Component):
