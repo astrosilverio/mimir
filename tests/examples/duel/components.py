@@ -75,7 +75,8 @@ def make_player(
     player = player_factory.make()
     player.name = name
     player.description = description
-    player.bearer = player
+    player_equipment = player.get_component(EquipmentBearing)
+    player_equipment.bearer = player
     if location:
         player.location = location
         location.pick_up(player)

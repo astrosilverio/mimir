@@ -67,7 +67,7 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
     def test_set_out_of_range_skill(self):
         response = self.parser.execute('set expelliarmus 100000')
 
-        self.assertEqual(response, "Skill levels range from 0 to 20.")
+        self.assertEqual(response, "Skill levels range from 0 to 15.")
 
     def test_get(self):
         try:
@@ -128,3 +128,6 @@ class TestExpelliarmusCommand(unittest.TestCase):
         with self.assertRaises(LogicError) as e:
             expelliarmus.execute(self.castle, self.player, 'justin')
         self.assertEqual(e.exception.message, "Nothing happens.")
+
+    def test_setup_of_wand(self):
+        self.assertEqual(self.player.wand.owner, self.player)
