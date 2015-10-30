@@ -88,8 +88,8 @@ def _player_can_successfully_cast_expelliarmus(castle, player, other_player_name
 
 def _legal_skill_level(castle, player, word, skill):
     skill = int(skill)
-    if not 0 < skill < 20:
-        raise LogicError("Skill levels range from 0 to 20.")
+    if not 0 < skill <= 15:
+        raise LogicError("Skill levels range from 0 to 15.")
 
 
 # State Changes
