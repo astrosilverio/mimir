@@ -1,6 +1,4 @@
-from mock import Mock, MagicMock
-
-from braga.models import Entity, Component
+from braga import Entity, Component
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
