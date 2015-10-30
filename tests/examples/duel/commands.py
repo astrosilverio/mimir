@@ -2,7 +2,7 @@ import random
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
-from .components import EquipmentBearing
+from .components import EquipmentBearing, Equippable
 
 
 # Command Responses
@@ -92,6 +92,20 @@ def _legal_skill_level(castle, player, word, skill):
         raise LogicError("Skill levels range from 0 to 15.")
 
 
+def _is_in_inventory(castle, player, *args):
+    name_of_thing = ' '.join(args)
+    thing = player.get_thing(name_of_thing)
+    if not thing:
+        raise LogicError("You are not carrying that.")
+
+
+def _is_equippable(castle, player, *args):
+    name_of_thing = ' '.join(args)
+    thing = player.get_thing(name_of_thing)
+    if not thing.has_component(Equippable):
+        raise LogicError("You cannot equip that.")
+
+
 # State Changes
 def _confiscate_wand(castle, player, other_player_name):
     other_player = castle.players.get(other_player_name)
@@ -103,12 +117,22 @@ def _confiscate_wand(castle, player, other_player_name):
 
 
 def _increase_expelliarmus_skill(castle, player, other_player_name):
-    player.expelliarmus_skill += 1
+    if player.expelliarmus_skill < 15:
+        player.expelliarmus_skill += 1
 
 
 def _set_expelliarmus_skill(castle, player, word, skill):
     level = int(skill)
     player.expelliarmus_skill = level
+
+
+def _equip_object(castle, player, *args):
+    name_of_thing = ' '.join(args)
+    thing = player.get_thing(name_of_thing)
+    if hasattr(player, thing.equip_name):
+        existing_thing = getattr(player, thing.equip_name)
+        player.unequip(existing_thing)
+    player.equip(thing)
 
 
 # Standard Commands
@@ -124,11 +148,11 @@ expelliarmus = ChangefulCommand(
     response=_red_sparks)
 
 # General management Commands
-# equip = ChangefulCommand(
-#     name='equip',
-#     rules=[_is_in_inventory, _is_equippable],
-#     state_changes=[_equip_object],
-#     response=_describe_wand)
+equip = ChangefulCommand(
+    name='equip',
+    rules=[_is_in_inventory, _is_equippable],
+    state_changes=[_equip_object],
+    response=_describe_wand)
 
 get_game_state = Command(
     name='state',
@@ -153,5 +177,6 @@ commands = {
     'expelliarmus': expelliarmus,
     'set': set_expelliarmus_skill,
     'check': get_expelliarmus_skill,
-    'state': get_game_state
+    'state': get_game_state,
+    'equip': equip
 }

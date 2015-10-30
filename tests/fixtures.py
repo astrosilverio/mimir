@@ -51,6 +51,11 @@ class Container(Component):
     def put_down(self, thing):
         self._inventory.remove(thing)
 
+    def get_thing(self, name):
+        things = [thing for thing in self._inventory if thing.name == name]
+        if len(things) == 1:
+            return things[0]
+
     def print_inventory(self):
         return '\n'.join([thing.name for thing in self.inventory])
 

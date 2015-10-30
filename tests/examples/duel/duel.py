@@ -36,20 +36,20 @@ def setUp():
         location=duel_room,
         wand_description="Surprisingly swishy.",
         name="You",
-        wand_name="Your wand")
+        wand_name="your wand")
 
     justin = setup_player(
         description="Justin Finch-Fletchley stares at you bullishly from the other end of the table.",
         location=duel_room,
         wand_description="Heavy but brittle.",
         name="Justin Finch-Fletchley",
-        wand_name="Justin's wand")
+        wand_name="justin's wand")
 
     castle = setup_castle(
         players={'me': player, 'justin': justin},
         commands=commands,
-        canonicals=set(['look', 'inventory', 'expelliarmus', 'set', 'check', 'justin', 'wand', 'state']),
-        noncanonicals={})
+        canonicals=set(['look', 'inventory', 'expelliarmus', 'set', 'check', 'justin', 'wand', 'state', 'equip', "justin's"]),
+        noncanonicals={'use': 'equip', 'my': 'your'})
 
     parser = Parser(player, castle)
     return parser

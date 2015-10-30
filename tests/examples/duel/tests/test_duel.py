@@ -3,8 +3,8 @@ import unittest
 from engine.exceptions import StateError, LogicError, ParserError
 from engine.Parser import Parser
 from tests.examples.duel.duel import setup_castle, setup_player
-from tests.examples.duel.commands import expelliarmus, inventory, look, set_expelliarmus_skill, get_expelliarmus_skill
-from tests.examples.duel.components import make_room
+from tests.examples.duel.commands import equip, expelliarmus, inventory, look, set_expelliarmus_skill, get_expelliarmus_skill
+from tests.examples.duel.components import make_room, make_wand
 
 
 class TestBasicCommands(unittest.TestCase):
@@ -76,6 +76,47 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
             self.fail("correct usage of `get` should not raise an error")
 
         self.assertEqual(response, str(self.player.expelliarmus_skill))
+
+
+class TestEquipCommand(unittest.TestCase):
+
+    def setUp(self):
+        room = make_room(name="duel room", description="test room")
+        self.player = setup_player(name="You", description="You are a test", location=room, wand_description="Imaginary")
+        self.wand = self.player.wand
+        self.other_wand = make_wand(name="elder wand", description="Yep, that Elder Wand")
+
+        self.castle = setup_castle(
+            players={'me': self.player},
+            commands={'equip': equip},
+            canonicals=set(['equip', 'elder', 'wand', 'your']),
+            noncanonicals={'my': 'your'})
+        self.parser = Parser(self.player, self.castle)
+
+    def test_can_equip_wand_in_inventory(self):
+        self.assertEqual(self.player.wand, self.wand)
+        self.player.pick_up(self.other_wand)
+        try:
+            equip.execute(self.castle, self.player, 'elder', 'wand')
+        except LogicError:
+            self.fail("correct syntax for `equip` should not raise an error")
+        self.assertEqual(self.player.wand, self.other_wand)
+
+    def test_cannot_equip_wand_not_in_inventory(self):
+        self.assertEqual(self.player.wand, self.wand)
+        with self.assertRaises(LogicError) as e:
+            equip.execute(self.castle, self.player, 'elder', 'wand')
+        self.assertEqual(e.exception.message, "You are not carrying that.")
+        self.assertEqual(self.player.wand, self.wand)
+
+    def test_parser_integration_correct_syntax(self):
+        self.assertEqual(self.player.wand, self.wand)
+        self.player.pick_up(self.other_wand)
+        try:
+            self.parser.execute('equip elder wand')
+        except (StateError, LogicError, ParserError):
+            self.fail("correct syntax for `equip` should not raise an error")
+        self.assertEqual(self.player.wand, self.other_wand)
 
 
 class TestExpelliarmusCommand(unittest.TestCase):

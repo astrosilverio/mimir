@@ -27,7 +27,7 @@ class Parser(object):
     def process(self, user_input):
         """Takes user_input, processes it into an attempted command."""
         words = user_input.split()
-        words = [re.sub('\W+', '', word) for word in words]
+        words = [re.sub('\W+\'', '', word) for word in words]
         words = [word if ((word in self.castle.canonicals) or self._is_number(word)) else self.castle.noncanonicals.get(word, None) for word in words]
         words = [word for word in words if word is not None]
 
