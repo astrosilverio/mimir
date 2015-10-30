@@ -11,7 +11,7 @@ def _look(castle, player):
 
 
 def _inventory(castle, player):
-    return player.print_inventory()
+    return '\t'+'\n\t'.join(player.print_inventory().split('\n'))
 
 
 def _red_sparks(castle, player):
@@ -20,6 +20,23 @@ def _red_sparks(castle, player):
 
 def _get_skill(castle, player):
     return str(player.expelliarmus_skill)
+
+
+def _describe_wand(castle, player):
+    return "You are using {}".format(player.wand.name.lower())
+
+
+def _summarize_game(castle, player):
+    summary = "You are carrying:\n{inventory} \
+        \n\nYour expelliarmus skill is: {skill}".format(
+        inventory=_inventory(castle, player),
+        skill=str(player.expelliarmus_skill))
+    if hasattr(player, 'wand'):
+        summary = summary + "\n\nYou are using {wand}.".format(wand=player.wand.name.lower())
+    justin = castle.players['justin']
+    if hasattr(justin, 'wand'):
+        summary = summary + "\n\nJustin is using {wand}.".format(wand=justin.wand.name.lower())
+    return summary
 
 
 # Syntax
@@ -107,17 +124,23 @@ expelliarmus = ChangefulCommand(
     response=_red_sparks)
 
 # General management Commands
-# switch_wands = ChangefulCommand(
-#     name='switch',
-#     rules=[_is_in_same_room, _has_a_wand],
-#     state_changes=[_swap_wands],
-#     response=_throw_wand)
+# equip = ChangefulCommand(
+#     name='equip',
+#     rules=[_is_in_inventory, _is_equippable],
+#     state_changes=[_equip_object],
+#     response=_describe_wand)
+
+get_game_state = Command(
+    name='state',
+    response=_summarize_game)
+
 set_expelliarmus_skill = ChangefulCommand(
     name='set',
     syntax=[_is_expelliarmus, _is_valid_number],
     rules=[_legal_skill_level],
     state_changes=[_set_expelliarmus_skill],
     response=_get_skill)
+
 get_expelliarmus_skill = Command(
     name='check',
     syntax=[_is_expelliarmus],
@@ -129,5 +152,6 @@ commands = {
     'inventory': inventory,
     'expelliarmus': expelliarmus,
     'set': set_expelliarmus_skill,
-    'check': get_expelliarmus_skill
+    'check': get_expelliarmus_skill,
+    'state': get_game_state
 }
