@@ -48,7 +48,7 @@ def setUp():
     castle = setup_castle(
         players={'me': player, 'justin': justin},
         commands=commands,
-        canonicals=set(['look', 'inventory', 'expelliarmus', 'set', 'check', 'justin', 'wand', 'state', 'equip', "justin's"]),
+        canonicals=set(['look', 'inventory', 'expelliarmus', 'set', 'check', 'justin', 'wand', 'state', 'equip', "justin's", 'give']),
         noncanonicals={'use': 'equip', 'my': 'your'})
 
     parser = Parser(player, castle)

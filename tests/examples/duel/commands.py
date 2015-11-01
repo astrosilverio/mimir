@@ -39,6 +39,10 @@ def _summarize_game(castle, player):
     return summary
 
 
+def _describe_someone_else_wand(castle, player):
+    return "Justin is using {}".format(castle.players['justin'].wand.name.lower())
+
+
 # Syntax
 def _is_a_player(castle, word):
     if word not in castle.players.keys():
@@ -135,6 +139,24 @@ def _equip_object(castle, player, *args):
     player.equip(thing)
 
 
+def _equip_someone_else(castle, player, *args):
+    args_list = list(args)
+    name = [word for word in args_list if word in castle.players.keys()]
+    if len(name) != 1:
+        raise LogicError("I do not know who you are talking about.")
+    args_list.remove(name[0])
+    _is_in_inventory(castle, player, *args_list)
+    _is_equippable(castle, player, *args_list)
+    other_player = castle.players[name[0]]
+    name_of_thing = ' '.join(args_list)
+    thing = player.get_thing(name_of_thing)
+    if thing in player.equipment:
+        player.unequip(thing)
+    player.put_down(thing)
+    other_player.pick_up(thing)
+    _equip_object(castle, other_player, *args_list)
+
+
 # Standard Commands
 look = Command(name='look', response=_look)
 inventory = Command(name='inventory', response=_inventory)
@@ -153,6 +175,11 @@ equip = ChangefulCommand(
     rules=[_is_in_inventory, _is_equippable],
     state_changes=[_equip_object],
     response=_describe_wand)
+
+give_away_wand = ChangefulCommand(
+    name='give',
+    state_changes=[_equip_someone_else],
+    response=_describe_someone_else_wand)
 
 get_game_state = Command(
     name='state',
@@ -178,5 +205,6 @@ commands = {
     'set': set_expelliarmus_skill,
     'check': get_expelliarmus_skill,
     'state': get_game_state,
-    'equip': equip
+    'equip': equip,
+    'give': give_away_wand
 }
