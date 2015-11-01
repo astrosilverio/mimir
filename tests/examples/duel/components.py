@@ -7,9 +7,15 @@ from tests.fixtures import Description, Container, Location, Mapping
 # Components
 class Equippable(Component):
 
-    def __init__(self, owner=None, equip_name=None):
-        self.owner = owner
+    def __init__(self, bearer=None, equip_name=None):
+        self.bearer = bearer
         self.equip_name = equip_name
+
+
+class ObjectLoyalty(Component):
+
+    def __init__(self, owner=None):
+        self.owner = owner
 
 
 class EquipmentBearing(Component):
@@ -23,12 +29,13 @@ class EquipmentBearing(Component):
             raise LogicError
 
         setattr(self, thing.equip_name, thing)
-        thing.owner = self.bearer
+        thing.bearer = self.bearer
         self.equipment.add(thing)
 
     def unequip(self, thing):
         delattr(self, thing.equip_name)
-        thing.owner = None
+        self.equipment.remove(thing)
+        thing.bearer = None
 
 
 class ExpelliarmusSkill(Component):
@@ -88,11 +95,13 @@ wand_factory = Assemblage()
 wand_factory.add_component(Description)
 wand_factory.add_component(Name)
 wand_factory.add_component(Equippable)
+wand_factory.add_component(ObjectLoyalty)
 
 
-def make_wand(description=None, name=None):
+def make_wand(description=None, name=None, player=None):
     wand = wand_factory.make()
     wand.description = description
     wand.name = name
     wand.equip_name = 'wand'
+    wand.owner = player
     return wand

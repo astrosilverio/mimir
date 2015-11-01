@@ -101,6 +101,10 @@ class TestEquipCommand(unittest.TestCase):
         except LogicError:
             self.fail("correct syntax for `equip` should not raise an error")
         self.assertEqual(self.player.wand, self.other_wand)
+        self.assertIsNone(self.wand.bearer)
+        self.assertEqual(self.player, self.wand.owner)
+        self.assertEqual(self.player, self.other_wand.bearer)
+        self.assertIsNone(self.other_wand.owner)
 
     def test_cannot_equip_wand_not_in_inventory(self):
         self.assertEqual(self.player.wand, self.wand)

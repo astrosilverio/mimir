@@ -8,7 +8,7 @@ from tests.examples.duel.components import make_room, make_player, make_wand
 
 def setup_player(name, description, location, wand_description, wand_name='wand'):
     player = make_player(description=description, location=location, name=name)
-    player_wand = make_wand(description=wand_description, name=wand_name)
+    player_wand = make_wand(description=wand_description, name=wand_name, player=player)
     player.equip(player_wand)
     player.pick_up(player_wand)
     return player
