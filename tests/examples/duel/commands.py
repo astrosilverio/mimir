@@ -15,11 +15,11 @@ def _inventory(castle, player):
 
 
 def _red_sparks(castle, player):
-    return "A stream of red sparks shoots out the end of your wand!"
+    return "A stream of red sparks shoots out the end of your wand!\n\nJustin's wand spins out of his hand and flies to you.\nYour casting skill for the expelliarmus spell has increased."
 
 
 def _get_skill(castle, player):
-    return str(player.expelliarmus_skill)
+    return "\n".join([str(player.expelliarmus_skill), "Your chance of success is {}/20.".format(_get_expelliarmus_skill(player))])
 
 
 def _describe_wand(castle, player):
@@ -76,7 +76,7 @@ def _has_a_wand(castle, player, other_player_name):
         raise LogicError("Nothing happens. Your opponent is not carrying their wand!")
 
 
-def _player_can_successfully_cast_expelliarmus(castle, player, other_player_name):
+def _get_expelliarmus_skill(player):
     player_skill = 0
     if hasattr(player, 'wand'):
         player_skill += 1
@@ -85,7 +85,11 @@ def _player_can_successfully_cast_expelliarmus(castle, player, other_player_name
 
     if hasattr(player, 'wand') and hasattr(player, 'expelliarmus_skill'):
         player_skill += player.expelliarmus_skill
+    return player_skill
 
+
+def _player_can_successfully_cast_expelliarmus(castle, player, other_player_name):
+    player_skill = _get_expelliarmus_skill(player)
     if player_skill < random.randint(1, 20):
         raise LogicError("Nothing happens.")
 
