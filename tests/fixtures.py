@@ -1,4 +1,6 @@
-from braga import Entity, Component
+from collections import defaultdict
+
+from braga import Entity, Component, System, Aspect
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
@@ -64,6 +66,32 @@ class Location(Component):
 
     def __init__(self, location=None):
         self.location = location
+
+
+class Name(Component):
+    """A name for the Entity."""
+
+    INITIAL_PROPERTIES = ['name']
+
+    def __init__(self, name=None):
+        self.name = name
+
+
+class NameSystem(System):
+    """Associates strings with Entities."""
+    def __init__(self, world):
+        super(NameSystem, self).__init__(world=world, aspect=Aspect(all_of=set([Name])))
+        self.names = defaultdict(lambda: None)
+        self.update()
+
+    def get_entity_from_name(self, name):
+        return self.names.get(name)
+
+    def update(self):
+        for entity in self.entities:
+            if entity.name in self.names.keys():
+                raise ValueError("Duplicate entity names")
+            self.names[entity.name] = entity
 
 
 class CommandTestBase(object):
