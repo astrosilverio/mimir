@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from braga import Entity, Component, System, Aspect
+from braga import Entity, Component, System, Assemblage, Aspect
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
@@ -92,6 +92,9 @@ class NameSystem(System):
             if entity.name in self.names.keys():
                 raise ValueError("Duplicate entity names")
             self.names[entity.name] = entity
+
+
+generic_thing_factory = Assemblage(components=[Name, Description])
 
 
 class CommandTestBase(object):
