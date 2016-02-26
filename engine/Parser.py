@@ -32,9 +32,10 @@ class Parser(object):
         entity = self.name_system.get_entity_from_name(word)
         if not entity:
             raise ParserError("Cannot find entity with that name")
+        return entity
 
-    def process(self, user_input):
-        """Takes user_input, processes it into an attempted command."""
+    def normalize(self, user_input):
+        """Takes user_input, processes it into a series of strings."""
         words = user_input.split()
         words = [re.sub('\W+\'', '', word) for word in words]
         words = [word if ((word in self.canonicals) or self._is_number(word)) else self.noncanonicals.get(word, None) for word in words]
@@ -46,16 +47,20 @@ class Parser(object):
         if words[0] not in self.commands.keys():
             raise ParserError(Messages.UNKNOWN_VERB.format(words[0]))
 
-        processed_input = [self.commands.get(words[0])]
-        processed_input.extend([self.get_entity(word) for word in words[1:]])
+        return words
 
-        return processed_input
+    def tokenize(self, normalized_input):
+        """Takes a list of strings and associates them with in-game entities."""
+        tokenized_input = [self.commands.get(normalized_input[0])]
+        tokenized_input.extend([self.get_entity(word) for word in normalized_input[1:]])
+
+        return tokenized_input
 
     def execute(self, user_input):
         """Gives processed user input to command, gets response."""
         try:
-            processed_input = self.process(user_input)
-            response = processed_input[0].execute(processed_input[1:])
+            processed_input = self.tokenize(self.normalize(user_input))
+            response = processed_input[0].execute(self.world, self.player, processed_input[1:])
         except (ParserError, StateError, LogicError) as e:
             response = e.message
         finally:
