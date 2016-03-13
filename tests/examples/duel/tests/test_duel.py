@@ -7,35 +7,6 @@ from tests.examples.duel.commands import equip, expelliarmus, inventory, look, s
 from tests.examples.duel.components import make_room, make_wand
 
 
-class TestBasicCommands(unittest.TestCase):
-
-    def setUp(self):
-        room = make_room(name="duel room", description="test room")
-        self.player = setup_player(name="You", description="You are a test", location=room, wand_description="Imaginary")
-        self.castle = setup_castle(
-            players={'me': self.player},
-            commands={'inventory': inventory, 'look': look},
-            canonicals=set(['look', 'inventory']),
-            noncanonicals={})
-        self.parser = Parser(self.player, self.castle)
-
-    def test_inventory(self):
-        try:
-            response = self.parser.execute('inventory')
-        except (StateError, LogicError, ParserError):
-            self.fail("`inventory` should not raise an error")
-
-        self.assertEqual(response, self.player.print_inventory())
-
-    def test_look(self):
-        try:
-            response = self.parser.execute('look')
-        except (StateError, LogicError, ParserError):
-            self.fail("`look` should not raise an error")
-
-        self.assertEqual(response, self.player.location.description)
-
-
 class TestExpelliarmusHelperCommands(unittest.TestCase):
 
     def setUp(self):
@@ -54,7 +25,8 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
         except (StateError, LogicError, ParserError):
             self.fail("correct usage of `set` should not raise an error")
 
-        self.assertEqual(response, '10')
+        self.assertEqual(response, '10\nYour chance of success is 15/20.')
+        self.assertEqual(self.player.expelliarmus_skill, 10)
 
     def test_set_non_integer_skill(self):
         try:
@@ -63,11 +35,13 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
             self.fail("incorrect usage of `set` should not raise an error")
 
         self.assertEqual(response, "You must use an integer skill level.")
+        self.assertEqual(self.player.expelliarmus_skill, 0)
 
     def test_set_out_of_range_skill(self):
         response = self.parser.execute('set expelliarmus 100000')
 
         self.assertEqual(response, "Skill levels range from 0 to 15.")
+        self.assertEqual(self.player.expelliarmus_skill, 0)
 
     def test_get(self):
         try:
@@ -75,7 +49,7 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
         except (StateError, LogicError, ParserError):
             self.fail("correct usage of `get` should not raise an error")
 
-        self.assertEqual(response, str(self.player.expelliarmus_skill))
+        self.assertEqual(response, "0\nYour chance of success is 5/20.")
 
 
 class TestEquipCommand(unittest.TestCase):
@@ -135,12 +109,6 @@ class TestExpelliarmusCommand(unittest.TestCase):
             canonicals=set(['expelliarmus', 'justin', 'wand', 'me']),
             noncanonicals={})
         self.parser = Parser(self.player, self.castle)
-
-    def test_good_syntax(self):
-        try:
-            self.parser.execute('expelliarmus justin')
-        except LogicError:
-            self.fail("correct syntax of expelliarmus should not raise an error")
 
     def test_bad_syntax(self):
         with self.assertRaises(LogicError) as e:

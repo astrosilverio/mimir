@@ -20,8 +20,8 @@ class ObjectLoyalty(Component):
 
 class EquipmentBearing(Component):
 
-    def __init__(self, bearer=None):
-        self.bearer = bearer
+    def __init__(self, bearer=None):  # TODO it would be nice for this to have to have a bearer
+        self.bearer = bearer  # TODO make components automatically know their entities
         self.equipment = set()
 
     def equip(self, thing):
@@ -72,14 +72,14 @@ player_factory.add_component(Container)
 player_factory.add_component(Location)
 player_factory.add_component(ExpelliarmusSkill)
 player_factory.add_component(Name)
-player_factory.add_component(EquipmentBearing)
+player_factory.add_component(EquipmentBearing, init_args='future self')
 
 
 def make_player(
         name=None,
         description=None,
         location=None):
-    player = player_factory.make()
+    player = player_factory.make()  # TODO make `make` smarter so I can make equipmentbearing smarter
     player.name = name
     player.description = description
     player_equipment = player.get_component(EquipmentBearing)

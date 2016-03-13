@@ -11,7 +11,7 @@ def _look(castle, player):
 
 
 def _inventory(castle, player):
-    return player.print_inventory()
+    return '/n'.join([thing.name for thing in player.inventory])
 
 
 def _red_sparks(castle, player):
@@ -29,7 +29,7 @@ def _describe_wand(castle, player):
 def _summarize_game(castle, player):
     summary = "You are carrying:\n{inventory} \
         \n\nYour expelliarmus skill is: {skill}".format(
-        inventory='\t'+'\n\t'.join(player.print_inventory().split('\n')),
+        inventory='\t'+'\n\t'.join(_inventory(castle, player).split('\n')),
         skill=str(player.expelliarmus_skill))
     if hasattr(player, 'wand'):
         summary = summary + "\n\nYou are using {wand}.".format(wand=player.wand.name.lower())

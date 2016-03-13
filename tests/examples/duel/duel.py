@@ -1,49 +1,47 @@
 from __future__ import absolute_import
 
+from braga import World
+from braga.examples import duel
+
 from engine.Parser import Parser
-from engine.StateManager import StateManager
 from tests.examples.duel.commands import commands
-from tests.examples.duel.components import make_room, make_player, make_wand
-
-
-def setup_player(name, description, location, wand_description, wand_name='wand'):
-    player = make_player(description=description, location=location, name=name)
-    player_wand = make_wand(description=wand_description, name=wand_name, player=player)
-    player.equip(player_wand)
-    player.pick_up(player_wand)
-    return player
-
-
-def setup_castle(players, commands, canonicals, noncanonicals):
-    castle = StateManager('duelsim', 'init_state')
-    castle.players = players
-    castle.commands = commands
-    castle.canonicals = canonicals
-    castle.noncanonicals = noncanonicals
-    return castle
 
 
 def setUp():
+    # Make World
+    duel_world = World()
+    duel_world.add_system(duel.ContainerSystem)
+    duel_world.add_system(duel.EquipmentSystem)
+
     # Make room
-    duel_room = make_room(
-        name="Duel Room",
+    duel_room = duel_world.make_entity(
+        duel.room_factory,
         description="You are in a large, dusty room, standing at one end of a long wooden table. Someone has placed a sign on an easel that says 'Duelling club'. There is a door in the southwest corner."
     )
 
     # Make duellers
-    player = setup_player(
+    player = duel_world.make_entity(
+        duel.player_factory,
         description="You stare trepidously down the table at Justin Finch-Fletchley.",
-        location=duel_room,
-        wand_description="Surprisingly swishy.",
-        name="You",
-        wand_name="your wand")
+        name="You")
 
-    justin = setup_player(
+    justin = duel_world.make_entity(
+        duel.player_factory,
         description="Justin Finch-Fletchley stares at you bullishly from the other end of the table.",
-        location=duel_room,
-        wand_description="Heavy but brittle.",
-        name="Justin Finch-Fletchley",
-        wand_name="justin's wand")
+        name="Justin Finch-Fletchley")
+
+    # Make wands
+    player_wand = duel_world.make_entity(
+        duel.wand_factory,
+        description="Surprisingly swishy.",
+        name="your wand",
+        owner=player)
+
+    justin_wand = duel_world.make_entity(
+        duel.wand_factory,
+        description="Heavy but brittle.",
+        name="justin's wand",
+        owner=justin)
 
     castle = setup_castle(
         players={'me': player, 'justin': justin},
