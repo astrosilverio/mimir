@@ -9,12 +9,10 @@ class Parser(object):
         Gets response from LogicHandler. Gives response back to user.
     """
 
-    def __init__(self, world, player, commands=None, canonicals=None, noncanonicals=None):
+    def __init__(self, world, player, commands=None):
         self.world = world
         self.player = player
         self.commands = commands if commands else dict()
-        self.canonicals = canonicals if canonicals else set()
-        self.noncanonicals = noncanonicals if noncanonicals else dict()
 
         self.name_system = self.world.systems.get(NameSystem)
         if not self.name_system:
@@ -38,7 +36,7 @@ class Parser(object):
         """Takes user_input, processes it into a series of strings."""
         words = user_input.split()
         words = [re.sub('\W+\'', '', word) for word in words]
-        words = [word if ((word in self.canonicals) or self._is_number(word)) else self.noncanonicals.get(word, None) for word in words]
+        words = [word if (word in self.name_system.tokens or self._is_number(word) or word in self.commands.keys()) else None for word in words]
         words = [word for word in words if word is not None]
 
         if not words:

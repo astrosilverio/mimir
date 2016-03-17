@@ -84,8 +84,15 @@ class NameSystem(System):
         self.names = defaultdict(lambda: None)
         self.update()
 
+    @property
+    def tokens(self):
+        return self.names.keys()
+
     def get_entity_from_name(self, name):
         return self.names.get(name)
+
+    def add_alias(self, alias, entity):
+        self.names[alias] = entity
 
     def update(self):
         for entity in self.entities:

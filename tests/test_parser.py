@@ -18,22 +18,16 @@ class TestParser(unittest.TestCase):
         self.fluff = world.make_entity(gtf, name='fluff')
         world.add_system(NameSystem)
 
-        canonicals = ['take', 'wand', 'fluff']
-        noncanonicals = {'get': 'take'}
         self.command = Command(
             name='take',
             syntax=[lambda x, y: True],
             response=lambda x, y: 'Congratulations you took your wand')
-        commands = {'take': self.command}
+        commands = {'take': self.command, 'get': self.command}
 
-        self.parser = Parser(world, self.player, commands, canonicals, noncanonicals)
+        self.parser = Parser(world, self.player, commands)
 
-    def test_process_with_canonicals_and_fluff(self):
+    def test_process_with_real_words_and_fluff(self):
         processed = self.parser.normalize('take dratted wand')
-        self.assertEqual(processed, ['take', 'wand'])
-
-    def test_process_with_non_canonicals_and_fluff(self):
-        processed = self.parser.normalize('get dratted wand')
         self.assertEqual(processed, ['take', 'wand'])
 
     def test_process_symbol_removal(self):
