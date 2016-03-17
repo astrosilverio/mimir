@@ -35,7 +35,7 @@ class Parser(object):
     def normalize(self, user_input):
         """Takes user_input, processes it into a series of strings."""
         words = user_input.split()
-        words = [re.sub('\W+\'', '', word) for word in words]
+        words = [re.sub('[\W+\'+\\+]', '', word) for word in words]
         words = [word if (word in self.name_system.tokens or self._is_number(word) or word in self.commands.keys()) else None for word in words]
         words = [word for word in words if word is not None]
 

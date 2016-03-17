@@ -50,10 +50,6 @@ class TestParser(unittest.TestCase):
         response = self.parser.execute('take wand')
         self.assertEqual(response, 'Congratulations you took your wand')
 
-    # def test_execute_with_logic_error(self):
-    #     response = self.parser.execute('take wand')
-    #     self.assertEqual(response, 'BOOM!')
-
     def test_execute_with_fluff(self):
         response = self.parser.execute('dratted bloody thing')
         self.assertEqual(response, Messages.GOBBLEDEGOOK)
