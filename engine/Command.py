@@ -10,17 +10,17 @@ class Command(object):
 
     # go = ChangefulCommand(syntax=[is_a_direction], rules=[path_exists], state_changes=move_player, response=look)
 
-    # def is_a_direction(castle, word):
-    #     return word in castle.directions
+    # def is_a_direction(world, word):
+    #     return word in world.directions
     #
-    # def path_exists(castle, player, direction):
+    # def path_exists(world, player, direction):
     #     if not <condition>:
     #         raise LogicError(Messages.NO_PATH)
 
-    # def move_player(castle, player, direction):
+    # def move_player(world, player, direction):
     #     change player location
 
-    # def look(castle, player):
+    # def look(world, player):
     #     return player.location.description
 
     def __init__(self, name=None, syntax=None, rules=None, response=None):
@@ -36,7 +36,7 @@ class Command(object):
         self.rules = rules
         self.response = response
 
-    def execute(self, castle, player, *args):
+    def execute(self, world, player, *args):
         """ Called by LogicHandler. Does three things:
             * makes sure command syntax is correct
             * checks if command can be run
@@ -45,12 +45,12 @@ class Command(object):
         if args and not self.syntax:
             raise LogicError(Messages.TOO_MANY_ARGS)
         if self.syntax:
-            self.check_syntax(castle, *args)
+            self.check_syntax(world, *args)
         if self.rules:
-            self.check_rules(castle, player, *args)
-        return self.calculate_response(castle, player)
+            self.check_rules(world, player, *args)
+        return self.calculate_response(world, player)
 
-    def check_syntax(self, castle, *args):
+    def check_syntax(self, world, *args):
         """ Makes sure that the command has been called
             with the correct number of arguments
             and that the arguments are the right type.
@@ -61,22 +61,22 @@ class Command(object):
             raise LogicError(Messages.TOO_MANY_ARGS)
 
         for arg, expected in zip(args, self.syntax):
-            expected(castle, arg)
+            expected(world, arg)
 
-    def check_rules(self, castle, player, *args):
+    def check_rules(self, world, player, *args):
         """ Calls the functions that check whether the command
             can be executed.
 
             If one of the checks doesn't pass, the check will raise.
         """
         for check in self.rules:
-            check(castle, player, *args)
+            check(world, player, *args)
 
-    def calculate_response(self, castle, player):
+    def calculate_response(self, world, player):
         """ Calls the function that formulates and formats
             the response to be sent back.
         """
-        return self.response(castle, player)
+        return self.response(world, player)
 
 
 class ChangefulCommand(Command):
@@ -92,28 +92,28 @@ class ChangefulCommand(Command):
         super(ChangefulCommand, self).__init__(name, syntax, rules, response)
         self.state_changes = state_changes
 
-    def execute(self, castle, player, *args):
+    def execute(self, world, player, *args):
         """ Same as above, except that it changes game state
             if checks pass.
         """
         if self.syntax:
-            self.check_syntax(castle, *args)
+            self.check_syntax(world, *args)
         if self.rules:
-            self.check_rules(castle, player, *args)
-        self.change_state(castle, player, *args)
-        return self.calculate_response(castle, player)
+            self.check_rules(world, player, *args)
+        self.change_state(world, player, *args)
+        return self.calculate_response(world, player)
 
-    def change_state(self, castle, player, *args):
-        """ Manages changes in castle state.
+    def change_state(self, world, player, *args):
+        """ Manages changes in world state.
             Wraps the state-changing methods in a transaction
             and will roll state back if something goes wrong.
         """
-        castle.start_transaction()
+        # world.start_transaction()
         try:
             for state_change in self.state_changes:
-                state_change(castle, player, *args)
+                state_change(world, player, *args)
         except StateError:
-            castle.rollback()
+            # world.rollback()
             raise LogicError(Messages.BAD_STATE_CHANGE)
-        finally:
-            castle.commit()
+        # finally:
+            # world.commit()

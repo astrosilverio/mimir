@@ -6,55 +6,55 @@ from .components import EquipmentBearing, Equippable
 
 
 # Command Responses
-def _look(castle, player):
+def _look(world, player):
     return player.location.description
 
 
-def _inventory(castle, player):
+def _inventory(world, player):
     return '/n'.join([thing.name for thing in player.inventory])
 
 
-def _red_sparks(castle, player):
+def _red_sparks(world, player):
     return "A stream of red sparks shoots out the end of your wand!\n\nJustin's wand spins out of his hand and flies to you.\nYour casting skill for the expelliarmus spell has increased."
 
 
-def _get_skill(castle, player):
+def _get_skill(world, player):
     return "\n".join([str(player.expelliarmus_skill), "Your chance of success is {}/20.".format(_get_expelliarmus_skill(player))])
 
 
-def _describe_wand(castle, player):
+def _describe_wand(world, player):
     return "You are using {}".format(player.wand.name.lower())
 
 
-def _summarize_game(castle, player):
+def _summarize_game(world, player):
     summary = "You are carrying:\n{inventory} \
         \n\nYour expelliarmus skill is: {skill}".format(
-        inventory='\t'+'\n\t'.join(_inventory(castle, player).split('\n')),
+        inventory='\t'+'\n\t'.join(_inventory(world, player).split('\n')),
         skill=str(player.expelliarmus_skill))
     if hasattr(player, 'wand'):
         summary = summary + "\n\nYou are using {wand}.".format(wand=player.wand.name.lower())
-    justin = castle.players['justin']
+    justin = world.players['justin']
     if hasattr(justin, 'wand'):
         summary = summary + "\n\nJustin is using {wand}.".format(wand=justin.wand.name.lower())
     return summary
 
 
-def _describe_someone_else_wand(castle, player):
-    return "Justin is using {}".format(castle.players['justin'].wand.name.lower())
+def _describe_someone_else_wand(world, player):
+    return "Justin is using {}".format(world.players['justin'].wand.name.lower())
 
 
 # Syntax
-def _is_a_player(castle, word):
-    if word not in castle.players.keys():
+def _is_a_player(world, word):
+    if word not in world.players.keys():
         raise LogicError("You can only perform that action on other people!")
 
 
-def _is_expelliarmus(castle, word):
+def _is_expelliarmus(world, word):
     if word != 'expelliarmus':
         raise LogicError("You can only set your skill for expelliarmus.")
 
 
-def _is_valid_number(castle, word):
+def _is_valid_number(world, word):
     try:
         int(word)
     except ValueError:
@@ -62,14 +62,14 @@ def _is_valid_number(castle, word):
 
 
 # Rules
-def _is_in_same_room(castle, player, other_player_name):
-    other_player = castle.players.get(other_player_name)
+def _is_in_same_room(world, player, other_player_name):
+    other_player = world.players.get(other_player_name)
     if player.location != other_player.location:
         raise LogicError("You're too far away to do that!")
 
 
-def _has_a_wand(castle, player, other_player_name):
-    other_player = castle.players.get(other_player_name)
+def _has_a_wand(world, player, other_player_name):
+    other_player = world.players.get(other_player_name)
     try:
         other_player.wand
     except AttributeError:
@@ -88,26 +88,26 @@ def _get_expelliarmus_skill(player):
     return player_skill
 
 
-def _player_can_successfully_cast_expelliarmus(castle, player, other_player_name):
+def _player_can_successfully_cast_expelliarmus(world, player, other_player_name):
     player_skill = _get_expelliarmus_skill(player)
     if player_skill < random.randint(1, 20):
         raise LogicError("Nothing happens.")
 
 
-def _legal_skill_level(castle, player, word, skill):
+def _legal_skill_level(world, player, word, skill):
     skill = int(skill)
     if not 0 < skill <= 15:
         raise LogicError("Skill levels range from 0 to 15.")
 
 
-def _is_in_inventory(castle, player, *args):
+def _is_in_inventory(world, player, *args):
     name_of_thing = ' '.join(args)
     thing = player.get_thing(name_of_thing)
     if not thing:
         raise LogicError("You are not carrying that.")
 
 
-def _is_equippable(castle, player, *args):
+def _is_equippable(world, player, *args):
     name_of_thing = ' '.join(args)
     thing = player.get_thing(name_of_thing)
     if not thing.has_component(Equippable):
@@ -115,8 +115,8 @@ def _is_equippable(castle, player, *args):
 
 
 # State Changes
-def _confiscate_wand(castle, player, other_player_name):
-    other_player = castle.players.get(other_player_name)
+def _confiscate_wand(world, player, other_player_name):
+    other_player = world.players.get(other_player_name)
     other_player_wand = other_player.wand
     other_player_equipment = other_player.get_component(EquipmentBearing)
     other_player_equipment.unequip(other_player_wand)
@@ -124,17 +124,17 @@ def _confiscate_wand(castle, player, other_player_name):
     player.pick_up(other_player_wand)
 
 
-def _increase_expelliarmus_skill(castle, player, other_player_name):
+def _increase_expelliarmus_skill(world, player, other_player_name):
     if player.expelliarmus_skill < 15:
         player.expelliarmus_skill += 1
 
 
-def _set_expelliarmus_skill(castle, player, word, skill):
+def _set_expelliarmus_skill(world, player, word, skill):
     level = int(skill)
     player.expelliarmus_skill = level
 
 
-def _equip_object(castle, player, *args):
+def _equip_object(world, player, *args):
     name_of_thing = ' '.join(args)
     thing = player.get_thing(name_of_thing)
     if hasattr(player, thing.equip_name):
@@ -143,22 +143,22 @@ def _equip_object(castle, player, *args):
     player.equip(thing)
 
 
-def _equip_someone_else(castle, player, *args):
+def _equip_someone_else(world, player, *args):
     args_list = list(args)
-    name = [word for word in args_list if word in castle.players.keys()]
+    name = [word for word in args_list if word in world.players.keys()]
     if len(name) != 1:
         raise LogicError("I do not know who you are talking about.")
     args_list.remove(name[0])
-    _is_in_inventory(castle, player, *args_list)
-    _is_equippable(castle, player, *args_list)
-    other_player = castle.players[name[0]]
+    _is_in_inventory(world, player, *args_list)
+    _is_equippable(world, player, *args_list)
+    other_player = world.players[name[0]]
     name_of_thing = ' '.join(args_list)
     thing = player.get_thing(name_of_thing)
     if thing in player.equipment:
         player.unequip(thing)
     player.put_down(thing)
     other_player.pick_up(thing)
-    _equip_object(castle, other_player, *args_list)
+    _equip_object(world, other_player, *args_list)
 
 
 # Standard Commands
