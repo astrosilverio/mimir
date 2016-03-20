@@ -16,6 +16,7 @@ class TestParser(unittest.TestCase):
         self.player = world.make_entity(gtf, name='you')
         self.wand = world.make_entity(gtf, name='wand')
         self.fluff = world.make_entity(gtf, name='fluff')
+        self.cotton_candy = world.make_entity(gtf, name='cotton candy')
         world.add_system(NameSystem)
 
         self.command = Command(
@@ -26,17 +27,21 @@ class TestParser(unittest.TestCase):
 
         self.parser = Parser(world, self.player, commands)
 
-    def test_process_with_real_words_and_fluff(self):
-        processed = self.parser.normalize('take dratted wand')
-        self.assertEqual(processed, ['take', 'wand'])
+    def test_normalize_with_real_words_and_fluff(self):
+        normalized = self.parser.normalize('take dratted wand')
+        self.assertEqual(normalized, ['take', 'wand'])
 
-    def test_process_symbol_removal(self):
-        processed = self.parser.normalize('*ta@ke* *this*, wand!?!')
-        self.assertEqual(processed, ['take', 'wand'])
+    def test_normalize_symbol_removal(self):
+        normalized = self.parser.normalize('*ta@ke* *this*, wand!?!')
+        self.assertEqual(normalized, ['take', 'wand'])
 
-    def test_process_with_fluff(self):
+    def test_normalize_with_fluff(self):
         with self.assertRaises(ParserError):
             self.parser.normalize('dratted bloody thing')
+
+    def test_normalize_with_double_word_names(self):
+        normalized = self.parser.normalize('take cotton candy')
+        self.assertEqual(normalized, ['take', 'cotton candy'])
 
     def test_tokenization_of_known_words(self):
         tokens = self.parser.tokenize(['take', 'wand', 'you', 'fluff'])
@@ -45,6 +50,10 @@ class TestParser(unittest.TestCase):
     def test_tokenization_with_unknown_words(self):
         with self.assertRaises(ParserError):
             self.parser.tokenize(['take', 'broomstick', 'wand'])
+
+    def test_tokenization_with_double_word_names(self):
+        tokens = self.parser.tokenize(['take', 'cotton candy'])
+        self.assertEqual(tokens, [self.command, self.cotton_candy])
 
     def test_execute_without_error(self):
         response = self.parser.execute('take wand')

@@ -33,19 +33,28 @@ class Parser(object):
         return entity
 
     def normalize(self, user_input):
-        """Takes user_input, processes it into a series of strings."""
+        """Takes user_input, processes it into a series of strings that represent in-game concepts."""
         words = user_input.split()
-        words = [re.sub('[\W+\'+\\+]', '', word) for word in words]
-        words = [word if (word in self.name_system.tokens or self._is_number(word) or word in self.commands.keys()) else None for word in words]
-        words = [word for word in words if word is not None]
+        words = [re.sub('[\W+\\+]', '', word) for word in words]
+        words.reverse()
+        tokens = []
 
-        if not words:
+        while len(words) >= 1:
+            word = words.pop()
+            if word in self.name_system.tokens or self._is_number(word) or word in self.commands.keys():
+                tokens.append(word)
+            elif not words:
+                break
+            elif ' '.join([word, words[-1]]) in self.name_system.tokens:
+                tokens.append(' '.join([word, words[-1]]))
+
+        if not tokens:
             raise ParserError(Messages.GOBBLEDEGOOK)
 
-        if words[0] not in self.commands.keys():
-            raise ParserError(Messages.UNKNOWN_VERB.format(words[0]))
+        if tokens[0] not in self.commands.keys():
+            raise ParserError(Messages.UNKNOWN_VERB.format(tokens[0]))
 
-        return words
+        return tokens
 
     def tokenize(self, normalized_input):
         """Takes a list of strings and associates them with in-game entities."""
