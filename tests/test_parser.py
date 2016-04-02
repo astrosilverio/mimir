@@ -25,7 +25,7 @@ class TestParser(unittest.TestCase):
             response=lambda x, y: 'Congratulations you took your wand')
         commands = {'take': self.command, 'get': self.command}
 
-        self.parser = Parser(world, self.player, commands)
+        self.parser = Parser(world, world.systems[NameSystem], self.player, commands)
 
     def test_normalize_with_real_words_and_fluff(self):
         normalized = self.parser.normalize('take dratted wand')
