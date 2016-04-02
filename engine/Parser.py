@@ -1,5 +1,4 @@
 from engine.exceptions import ParserError, LogicError, StateError, Messages
-from tests.fixtures import NameSystem
 
 import re
 
@@ -9,14 +8,11 @@ class Parser(object):
         Gets response from LogicHandler. Gives response back to user.
     """
 
-    def __init__(self, world, player, commands=None):
+    def __init__(self, world, name_system, player, commands=None):
         self.world = world
         self.player = player
         self.commands = commands if commands else dict()
-
-        self.name_system = self.world.systems.get(NameSystem)
-        if not self.name_system:
-            raise ValueError("world needs a name system")
+        self.name_system = name_system
 
     def _is_number(self, word):
         try:
@@ -27,6 +23,8 @@ class Parser(object):
             return True
 
     def get_entity(self, word):
+        if self._is_number(word):
+            return word
         entity = self.name_system.get_entity_from_name(word)
         if not entity:
             raise ParserError("Cannot find entity with that name")
@@ -67,7 +65,7 @@ class Parser(object):
         """Gives processed user input to command, gets response."""
         try:
             processed_input = self.tokenize(self.normalize(user_input))
-            response = processed_input[0].execute(self.world, self.player, processed_input[1:])
+            response = processed_input[0].execute(self.world, self.player, *processed_input[1:])
         except (ParserError, StateError, LogicError) as e:
             response = e.message
         finally:
