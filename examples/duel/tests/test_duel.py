@@ -144,46 +144,63 @@ class TestEquipCommand(unittest.TestCase):
 class TestExpelliarmusCommand(unittest.TestCase):
 
     def setUp(self):
-        room = make_room(name="duel room", description="test room")
-        self.player = setup_player(name="You", description="You are a test", location=room, wand_name='your wand', wand_description="Imaginary")
-        self.justin = setup_player(name="Justin", description="Test opponent.", location=room, wand_name="justin's wand", wand_description="Not real")
-        self.castle = setup_castle(
-            players={'me': self.player, 'justin': self.justin},
-            commands={'expelliarmus': expelliarmus},
-            canonicals=set(['expelliarmus', 'justin', 'wand', 'me']),
-            noncanonicals={})
-        self.parser = Parser(self.player, self.castle)
+        self.world = World()
+        self.world.add_system(duel.ContainerSystem)
+        self.world.add_system(duel.EquipmentSystem)
+        self.world.add_system(duel.NameSystem)
+
+        room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
+        self.player = self.world.make_entity(duel.player_factory, name="you", description="You are a test", location=room)
+        self.opponent = self.world.make_entity(duel.player_factory, name="them", description="They are a test opponent", location=room)
+        self.wand = self.world.make_entity(
+            duel.wand_factory,
+            description="Surprisingly swishy.",
+            location=self.player,
+            name="your wand",
+            owner=self.player)
+        self.other_wand = self.world.make_entity(
+            duel.wand_factory,
+            description="Yep, that Elder Wand",
+            location=room,
+            name="elder wand")
+
+        self.world.systems[duel.ContainerSystem].auto_update = True
+        self.world.systems[duel.EquipmentSystem].auto_update = True
+        self.world.systems[duel.ContainerSystem].move(self.wand, self.player)
+        self.world.systems[duel.EquipmentSystem].equip(self.player, self.wand)
+        self.world.systems[duel.ContainerSystem].move(self.other_wand, self.opponent)
+        self.world.refresh()
 
     def test_bad_syntax(self):
         with self.assertRaises(LogicError) as e:
-            expelliarmus.execute(self.castle, self.player, 'wand')
+            expelliarmus.execute(self.world, self.player, self.wand)
         self.assertEqual(e.exception.message, "You can only perform that action on other people!")
 
-    def test_can_cast_expelliarmus_on_yourself(self):
+    def test_cannot_cast_expelliarmus_on_yourself(self):
         try:
             self.player.skill = 100
-            expelliarmus.execute(self.castle, self.player, 'me')
+            expelliarmus.execute(self.world, self.player, self.player)
         except LogicError:
             self.fail("You can cast on yourself")
 
     def test_cannot_cast_on_wandless_player(self):
-        wand = self.justin.wand
-        self.justin.unequip(wand)
         with self.assertRaises(AttributeError):
-            self.justin.wand
+            self.opponent.wand
         self.player.skill = 100
         with self.assertRaises(LogicError) as e:
-            expelliarmus.execute(self.castle, self.player, 'justin')
+            expelliarmus.execute(self.world, self.player, self.opponent)
         self.assertEqual(e.exception.message, "Nothing happens. Your opponent is not carrying their wand!")
 
     def test_wandless_player_cannot_cast_expelliarmus(self):
-        wand = self.player.wand
-        self.player.unequip(wand)
+        self.world.systems[duel.EquipmentSystem].unequip(self.player, self.wand)
+        self.world.systems[duel.EquipmentSystem].equip(self.opponent, self.other_wand)
+        self.world.refresh()
+
         with self.assertRaises(AttributeError):
             self.player.wand
-        self.assertTrue(self.justin.wand)
+        self.assertTrue(self.opponent.wand)
         with self.assertRaises(LogicError) as e:
-            expelliarmus.execute(self.castle, self.player, 'justin')
+            expelliarmus.execute(self.world, self.player, self.opponent)
         self.assertEqual(e.exception.message, "Nothing happens.")
 
     def test_setup_of_wand(self):
