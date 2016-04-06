@@ -211,45 +211,51 @@ class TestExpelliarmusCommand(unittest.TestCase):
 class TestGiveCommand(unittest.TestCase):
 
     def setUp(self):
-        room = make_room(name="duel room", description="test room")
-        self.player = setup_player(name="You", description="You are a test", location=room, wand_name="your wand", wand_description="Imaginary")
-        self.justin = setup_player(name="Justin", description="Test opponent.", location=room, wand_name="justin's wand", wand_description="Not real")
-        self.castle = setup_castle(
-            players={'me': self.player, 'justin': self.justin},
-            commands={'give': give_away_wand},
-            canonicals=set(['give', 'justin', 'wand', 'your']),
-            noncanonicals={'my': 'your'})
-        self.parser = Parser(self.player, self.castle)
+        self.world = World()
+        self.world.add_system(duel.ContainerSystem)
+        self.world.add_system(duel.EquipmentSystem)
+        self.world.add_system(duel.NameSystem)
 
-        self.wand = self.player.wand
+        room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
+        self.player = self.world.make_entity(duel.player_factory, name="you", description="You are a test", location=room)
+        self.opponent = self.world.make_entity(duel.player_factory, name="them", description="They are a test opponent", location=room)
+        self.wand = self.world.make_entity(
+            duel.wand_factory,
+            description="Surprisingly swishy.",
+            location=self.player,
+            name="your wand",
+            owner=self.player)
+        self.other_wand = self.world.make_entity(
+            duel.wand_factory,
+            description="Yep, that Elder Wand",
+            location=room,
+            name="elder wand")
 
-        self.justin_wand = self.justin.wand
-        self.justin.unequip(self.justin_wand)
-        self.justin.put_down(self.justin_wand)
-        self.player.pick_up(self.justin_wand)
+        self.world.systems[duel.ContainerSystem].auto_update = True
+        self.world.systems[duel.EquipmentSystem].auto_update = True
+        self.world.systems[duel.ContainerSystem].move(self.wand, self.player)
+        self.world.systems[duel.EquipmentSystem].equip(self.player, self.wand)
+        self.world.systems[duel.ContainerSystem].move(self.other_wand, self.player)
+        self.world.refresh()
 
-    def test_setup(self):
-        self.assertIn(self.wand, self.player.inventory)
-        self.assertIn(self.justin_wand, self.player.inventory)
+    # def test_full_parser_integration(self):
+    #     try:
+    #         self.parser.execute('give my wand to justin')
+    #     except Exception:
+    #         self.fail("That is correct syntax")
 
-        self.assertNotIn(self.justin_wand, self.justin.equipment)
-
-    def test_full_parser_integration(self):
-        try:
-            self.parser.execute('give my wand to justin')
-        except Exception:
-            self.fail("That is correct syntax")
-
-        self.assertIn(self.justin_wand, self.player.inventory)
-        self.assertIn(self.wand, self.justin.inventory)
-        self.assertIn(self.wand, self.justin.equipment)
+    #     self.assertIn(self.justin_wand, self.player.inventory)
+    #     self.assertIn(self.wand, self.justin.inventory)
+    #     self.assertIn(self.wand, self.justin.equipment)
 
     def test_command_execute_with_correct_syntax(self):
         try:
-            give_away_wand.execute(self.castle, self.player, 'your', 'wand', 'justin')
+            give_away_wand.execute(self.world, self.player, self.wand, self.opponent)
         except LogicError:
             self.fail("That is correct syntax")
 
-        self.assertIn(self.justin_wand, self.player.inventory)
-        self.assertIn(self.wand, self.justin.inventory)
-        self.assertIn(self.wand, self.justin.equipment)
+        self.assertIn(self.other_wand, self.player.inventory)
+        self.assertEqual(self.wand.bearer, self.opponent)
+        self.assertNotIn(self.wand, self.player.inventory)
+        self.assertIsNone(self.other_wand.bearer)
+        self.assertIn(self.wand, self.opponent.inventory)

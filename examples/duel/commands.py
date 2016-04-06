@@ -43,11 +43,6 @@ def _summarize_game(world, player):
             summary = summary + "\n\n{name} is using {wand}.".format(name=other_player.name, wand=other_player.wand.name)
     return summary
 
-
-def _describe_someone_else_wand(world, player, other_player):
-    return "{name} is using {wand}".format(name=other_player.name, wand=other_player.wand.name.lower())
-
-
 # Syntax
 def _is_a_player(world, entity):
     if entity not in player_aspect:
@@ -108,8 +103,8 @@ def _is_in_inventory(world, player, thing):
         raise LogicError("You are not carrying that.")
 
 
-def _is_equippable(world, player, thing):
-    if not thing.has_component(duel.Equipment):
+def _is_equippable(world, entity):
+    if not entity.has_component(duel.Equipment):
         raise LogicError("You cannot equip that.")
 
 
@@ -140,22 +135,11 @@ def _equip_object(world, player, thing):
     world.systems[duel.EquipmentSystem].equip(player, thing)
 
 
-def _equip_someone_else(world, player, *args):
-    args_list = list(args)
-    name = [word for word in args_list if word in world.players.keys()]
-    if len(name) != 1:
-        raise LogicError("I do not know who you are talking about.")
-    args_list.remove(name[0])
-    _is_in_inventory(world, player, *args_list)
-    _is_equippable(world, player, *args_list)
-    other_player = world.players[name[0]]
-    name_of_thing = ' '.join(args_list)
-    thing = player.get_thing(name_of_thing)
-    if thing in player.equipment:
-        player.unequip(thing)
-    player.put_down(thing)
-    other_player.pick_up(thing)
-    _equip_object(world, other_player, *args_list)
+def _equip_someone_else(world, player, equippable, other_player):
+    if equippable.bearer == player:
+        world.systems[duel.EquipmentSystem].unequip(player, equippable)
+    world.systems[duel.ContainerSystem].move(equippable, other_player)
+    _equip_object(world, other_player, equippable)
 
 
 # Standard Commands
@@ -173,14 +157,16 @@ expelliarmus = ChangefulCommand(
 # General management Commands
 equip = ChangefulCommand(
     name='equip',
-    rules=[_is_in_inventory, _is_equippable],
+    syntax=[_is_equippable],
+    rules=[_is_in_inventory],
     state_changes=[_equip_object],
     response=_describe_wand)
 
 give_away_wand = ChangefulCommand(
     name='give',
+    syntax=[_is_equippable, _is_a_player],
     state_changes=[_equip_someone_else],
-    response=_describe_someone_else_wand)
+    response=_summarize_game)
 
 get_game_state = Command(
     name='state',
