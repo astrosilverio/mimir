@@ -36,7 +36,7 @@ class Command(object):
         self.rules = rules
         self.response = response
 
-    def execute(self, world, player, *args):
+    def __call__(self, world, player, *args):
         """ Called by LogicHandler. Does three things:
             * makes sure command syntax is correct
             * checks if command can be run
@@ -92,7 +92,7 @@ class ChangefulCommand(Command):
         super(ChangefulCommand, self).__init__(name, syntax, rules, response)
         self.state_changes = state_changes
 
-    def execute(self, world, player, *args):
+    def __call__(self, world, player, *args):
         """ Same as above, except that it changes game state
             if checks pass.
         """

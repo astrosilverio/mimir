@@ -43,6 +43,7 @@ def _summarize_game(world, player):
             summary = summary + "\n\n{name} is using {wand}.".format(name=other_player.name, wand=other_player.wand.name)
     return summary
 
+
 # Syntax
 def _is_a_player(world, entity):
     if entity not in player_aspect:

@@ -65,7 +65,7 @@ class Parser(object):
         """Gives processed user input to command, gets response."""
         try:
             processed_input = self.tokenize(self.normalize(user_input))
-            response = processed_input[0].execute(self.world, self.player, *processed_input[1:])
+            response = processed_input[0](self.world, self.player, *processed_input[1:])
         except (ParserError, StateError, LogicError) as e:
             response = e.message
         finally:
