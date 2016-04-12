@@ -162,20 +162,20 @@ class TestEquip(unittest.TestCase):
         self.assertEqual(response, "You are not carrying that.")
 
 
-class TestGive(unittest.TestCase):
+class TestTrade(unittest.TestCase):
 
     def setUp(self):
         self.parser = duel_setup()
 
     def test_full_parser_integration(self):
         try:
-            response = self.parser.execute('give my wand to justin')
+            response = self.parser.execute('trade wands with justin')
         except Exception:
             self.fail("That is correct syntax")
 
-        expected_response = "You are carrying:\njustin's wand \
+        expected_response = "You are carrying:\n\tjustin's wand \
         \n\nYour expelliarmus skill is: {skill} \
         \n\nYou are using justin's wand \
-        \n\njustin finch-fletchley is using your wand.".format(skill=self.parser.player.skill)
+        \n\njustin finch-fletchley is using your wand".format(skill=self.parser.player.skill)
 
         self.assertEqual(response, expected_response)

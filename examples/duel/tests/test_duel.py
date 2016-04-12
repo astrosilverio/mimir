@@ -5,7 +5,7 @@ from braga.examples import duel
 
 from engine.exceptions import StateError, LogicError, ParserError
 from engine.Parser import Parser
-from examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, give_away_wand
+from examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
 
 
 class TestExpelliarmusHelperCommands(unittest.TestCase):
@@ -177,7 +177,7 @@ class TestExpelliarmusCommand(unittest.TestCase):
         self.assertEqual(self.player.wand.bearer, self.player)
 
 
-class TestGiveCommand(unittest.TestCase):
+class TestTradeCommand(unittest.TestCase):
 
     def setUp(self):
         self.world = World()
@@ -204,27 +204,19 @@ class TestGiveCommand(unittest.TestCase):
         self.world.systems[duel.EquipmentSystem].auto_update = True
         self.world.systems[duel.ContainerSystem].move(self.wand, self.player)
         self.world.systems[duel.EquipmentSystem].equip(self.player, self.wand)
-        self.world.systems[duel.ContainerSystem].move(self.other_wand, self.player)
+        self.world.systems[duel.ContainerSystem].move(self.other_wand, self.opponent)
+        self.world.systems[duel.EquipmentSystem].equip(self.opponent, self.other_wand)
         self.world.refresh()
-
-    # def test_full_parser_integration(self):
-    #     try:
-    #         self.parser.execute('give my wand to justin')
-    #     except Exception:
-    #         self.fail("That is correct syntax")
-
-    #     self.assertIn(self.justin_wand, self.player.inventory)
-    #     self.assertIn(self.wand, self.justin.inventory)
-    #     self.assertIn(self.wand, self.justin.equipment)
 
     def test_command_execute_with_correct_syntax(self):
         try:
-            give_away_wand(self.world, self.player, self.wand, self.opponent)
+            trade_wands(self.world, self.player, self.opponent)
         except LogicError:
             self.fail("That is correct syntax")
 
         self.assertIn(self.other_wand, self.player.inventory)
         self.assertEqual(self.wand.bearer, self.opponent)
         self.assertNotIn(self.wand, self.player.inventory)
-        self.assertIsNone(self.other_wand.bearer)
+        self.assertNotIn(self.other_wand, self.opponent.inventory)
+        self.assertEqual(self.other_wand.bearer, self.player)
         self.assertIn(self.wand, self.opponent.inventory)

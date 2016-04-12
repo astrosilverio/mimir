@@ -1,4 +1,5 @@
 import random
+import re
 
 from braga import Aspect
 from braga.examples import duel
@@ -36,11 +37,11 @@ def _summarize_game(world, player):
         inventory='\t'+'\n\t'.join(_inventory(world, player).split('\n')),
         skill=str(player.skill))
     if hasattr(player, 'wand'):
-        summary = summary + "\n\nYou are using {wand}.".format(wand=player.wand.name.lower())
+        summary = summary + "\n\nYou are using {wand}".format(wand=player.wand.name.lower())
     other_players = world.entities_with_aspect(player_aspect) - set([player])
     for other_player in other_players:
         if hasattr(other_player, 'wand'):
-            summary = summary + "\n\n{name} is using {wand}.".format(name=other_player.name, wand=other_player.wand.name)
+            summary = summary + "\n\n{name} is using {wand}".format(name=other_player.name, wand=other_player.wand.name)
     return summary
 
 
@@ -58,8 +59,14 @@ def _is_expelliarmus(world, word):
 def _is_valid_number(world, word):
     try:
         int(word)
-    except TypeError, ValueError:
+    except (TypeError, ValueError):
         raise LogicError("You must use an integer skill level.")
+
+
+def _is_equipment_type(world, word):
+    word = re.sub('s$', '', word)
+    if word != 'wand':
+        raise LogicError("You can't trade that away")
 
 
 # Rules
@@ -104,6 +111,15 @@ def _is_in_inventory(world, player, thing):
         raise LogicError("You are not carrying that.")
 
 
+def _has_thing_of_type_in_inventory(player, equipment_type):
+    if not [thing for thing in player.inventory if (hasattr(thing, 'equipment_type') and thing.equipment_type == equipment_type)]:
+        raise LogicError("{name} {verb} not carrying a {equipment_type}".format(
+            equipment_type=equipment_type,
+            name=player.name,
+            verb=("are" if player.name == "you" else "is"))
+        )
+
+
 def _is_equippable(world, entity):
     if not entity.has_component(duel.Equipment):
         raise LogicError("You cannot equip that.")
@@ -127,20 +143,39 @@ def _set_expelliarmus_skill(world, player, skill):
 
 
 def _equip_object(world, player, thing):
+    _unequip_item_of_type(world, player, thing.equipment_type)
+    world.systems[duel.EquipmentSystem].equip(player, thing)
+
+
+def _unequip_item_of_type(world, player, equipment_type):
     try:
-        existing_equipped_object = player.__getattribute__(thing.equipment_type)
+        existing_equipped_object = player.__getattribute__(equipment_type)
     except AttributeError:
         pass
     else:
         world.systems[duel.EquipmentSystem].unequip(player, existing_equipped_object)
-    world.systems[duel.EquipmentSystem].equip(player, thing)
 
 
-def _equip_someone_else(world, player, equippable, other_player):
-    if equippable.bearer == player:
-        world.systems[duel.EquipmentSystem].unequip(player, equippable)
-    world.systems[duel.ContainerSystem].move(equippable, other_player)
-    _equip_object(world, other_player, equippable)
+def _get_item_of_type(player, equipment_type):
+    items = [thing for thing in player.inventory if (hasattr(thing, 'equipment_type') and thing.equipment_type == equipment_type)]
+    if len(items) > 1:
+        raise LogicError("{name} {verb} carrying more than one {equipment_type}s".format(
+            equipment_type=equipment_type,
+            name=player.name,
+            verb=("are" if player.name == "you" else "is"))
+        )
+    return items[0]
+
+
+def _trade_equipment_types(world, player, other_player):
+    equipment_type = 'wand'
+    players = [player, other_player]
+    map(lambda p: _has_thing_of_type_in_inventory(p, equipment_type), players)
+    map(lambda p: _unequip_item_of_type(world, p, equipment_type), players)
+    players_equipment = _get_item_of_type(player, equipment_type)
+    other_players_equipment = _get_item_of_type(other_player, equipment_type)
+    map(world.systems[duel.ContainerSystem].move, [other_players_equipment, players_equipment], players)
+    map(lambda p, e: _equip_object(world, p, e), players, [other_players_equipment, players_equipment])
 
 
 # Standard Commands
@@ -163,10 +198,10 @@ equip = ChangefulCommand(
     state_changes=[_equip_object],
     response=_describe_wand)
 
-give_away_wand = ChangefulCommand(
-    name='give',
-    syntax=[_is_equippable, _is_a_player],
-    state_changes=[_equip_someone_else],
+trade_wands = ChangefulCommand(
+    name='trade',
+    syntax=[_is_a_player],
+    state_changes=[_trade_equipment_types],
     response=_summarize_game)
 
 get_game_state = Command(
@@ -194,5 +229,5 @@ commands = {
     'state': get_game_state,
     'equip': equip,
     'use': equip,
-    'give': give_away_wand
+    'trade': trade_wands
 }
