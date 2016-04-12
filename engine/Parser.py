@@ -33,7 +33,7 @@ class Parser(object):
     def normalize(self, user_input):
         """Takes user_input, processes it into a series of strings that represent in-game concepts."""
         words = user_input.split()
-        words = [re.sub('[\W+\\+(!\'+)]', '', word) for word in words]
+        words = [re.sub('[\W+\\+[!\'+]]', '', word) for word in words]
         words.reverse()
         tokens = []
 

@@ -60,46 +60,39 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
 class TestEquipCommand(unittest.TestCase):
 
     def setUp(self):
-        world = World()
-        world.add_system(duel.ContainerSystem)
-        world.add_system(duel.EquipmentSystem)
-        world.add_system(duel.NameSystem)
+        self.world = World()
+        self.world.add_system(duel.ContainerSystem)
+        self.world.add_system(duel.EquipmentSystem)
+        self.world.add_system(duel.NameSystem)
 
-        room = world.make_entity(duel.room_factory, name="duel room", description="test room")
-        self.player = world.make_entity(
+        room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
+        self.player = self.world.make_entity(
             duel.player_factory,
             name="you",
             description="You are a test",
             location=room)
-        self.wand = world.make_entity(
+        self.wand = self.world.make_entity(
             duel.wand_factory,
             description="Surprisingly swishy.",
             location=self.player,
             name="your wand",
             owner=self.player)
-        self.other_wand = world.make_entity(
+        self.other_wand = self.world.make_entity(
             duel.wand_factory,
             description="Yep, that Elder Wand",
             location=room,
             name="elder wand")
 
-        world.systems[duel.EquipmentSystem].auto_update = True
-        world.systems[duel.EquipmentSystem].equip(self.player, self.wand)
-        world.refresh()
-
-        self.parser = Parser(
-            world,
-            world.systems[duel.NameSystem],
-            self.player,
-            {'equip': equip}
-        )
+        self.world.systems[duel.EquipmentSystem].auto_update = True
+        self.world.systems[duel.EquipmentSystem].equip(self.player, self.wand)
+        self.world.refresh()
 
     def test_can_equip_wand_in_inventory(self):
         self.assertEqual(self.player.wand, self.wand)
-        self.parser.world.systems[duel.ContainerSystem].move(self.other_wand, self.player, True)
+        self.world.systems[duel.ContainerSystem].move(self.other_wand, self.player, True)
 
         try:
-            equip(self.parser.world, self.player, self.other_wand)
+            equip(self.world, self.player, self.other_wand)
         except LogicError:
             self.fail("correct syntax for `equip` should not raise an error")
 
@@ -112,18 +105,9 @@ class TestEquipCommand(unittest.TestCase):
     def test_cannot_equip_wand_not_in_inventory(self):
         self.assertEqual(self.player.wand, self.wand)
         with self.assertRaises(LogicError) as e:
-            equip(self.parser.world, self.player, self.other_wand)
+            equip(self.world, self.player, self.other_wand)
         self.assertEqual(e.exception.message, "You are not carrying that.")
         self.assertEqual(self.player.wand, self.wand)
-
-    def test_parser_integration_correct_syntax(self):
-        self.assertEqual(self.player.wand, self.wand)
-        self.parser.world.systems[duel.ContainerSystem].move(self.other_wand, self.player, True)
-        try:
-            self.parser.execute('equip elder wand')
-        except (StateError, LogicError, ParserError):
-            self.fail("correct syntax for `equip` should not raise an error")
-        self.assertEqual(self.player.wand, self.other_wand)
 
 
 class TestExpelliarmusCommand(unittest.TestCase):

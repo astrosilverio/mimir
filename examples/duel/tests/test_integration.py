@@ -1,6 +1,8 @@
 from mock import patch
 import unittest
 
+from braga.examples import duel
+
 from engine.exceptions import StateError, LogicError, ParserError
 from examples.duel.duel import setUp as duel_setup
 from examples.duel.commands import player_aspect
@@ -94,3 +96,86 @@ class TestExpelliarmus(unittest.TestCase):
             "A stream of red sparks shoots out the end of your wand!\
 \n\nJustin's wand spins out of his hand and flies to you.\
 \nYour casting skill for the expelliarmus spell has increased.")
+
+
+class TestExpelliarmusHelperCommands(unittest.TestCase):
+
+    def setUp(self):
+        self.parser = duel_setup()
+
+    def test_set(self):
+        try:
+            response = self.parser.execute('set skill 10')
+        except (StateError, LogicError, ParserError):
+            self.fail("correct usage of `set` should not raise an error")
+
+        self.assertEqual(response, '10\nYour chance of success is 15/20.')
+        self.assertEqual(self.parser.player.skill, 10)
+
+    def test_set_non_integer_skill(self):
+        try:
+            response = self.parser.execute('set skill your wand')
+        except (StateError, LogicError, ParserError):
+            self.fail("incorrect usage of `set` should not raise an error")
+
+        self.assertEqual(response, "You must use an integer skill level.")
+        self.assertEqual(self.parser.player.skill, 0)
+
+    def test_set_out_of_range_skill(self):
+        response = self.parser.execute('set skill 100000')
+
+        self.assertEqual(response, "Skill levels range from 0 to 15.")
+        self.assertEqual(self.parser.player.skill, 0)
+
+    def test_get(self):
+        try:
+            response = self.parser.execute('check skill')
+        except (StateError, LogicError, ParserError):
+            self.fail("correct usage of `get` should not raise an error")
+
+        self.assertEqual(response, "0\nYour chance of success is 5/20.")
+
+
+class TestEquip(unittest.TestCase):
+
+    def setUp(self):
+        self.parser = duel_setup()
+        self.parser.world.systems[duel.EquipmentSystem].unequip(
+            self.parser.get_entity("justin"),
+            self.parser.get_entity("justin's wand")
+        )
+
+    def test_can_equip_wand_in_inventory(self):
+        self.parser.world.systems[duel.ContainerSystem].move(
+            self.parser.get_entity("justin's wand"),
+            self.parser.get_entity("you"))
+        self.parser.world.refresh()
+        try:
+            response = self.parser.execute("equip justin's wand")
+        except LogicError:
+            self.fail("correct syntax for `equip` should not raise an error")
+
+        self.assertEqual(response, "You are using justin's wand")
+
+    def test_cannot_equip_wand_not_in_inventory(self):
+        response = self.parser.execute("equip justin's wand")
+        self.assertEqual(response, "You are not carrying that.")
+
+
+class TestGive(unittest.TestCase):
+
+    def setUp(self):
+        self.parser = duel_setup()
+
+    def test_full_parser_integration(self):
+        try:
+            response = self.parser.execute('give my wand to justin')
+        except Exception:
+            self.fail("That is correct syntax")
+
+        expected_response = "You are carrying:\njustin's wand \
+        \n\nYour expelliarmus skill is: {skill} \
+        \n\nYou are using justin's wand \
+        \n\njustin finch-fletchley is using your wand.".format(skill=self.parser.player.skill)
+
+        self.assertEqual(response, expected_response)
