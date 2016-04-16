@@ -1,6 +1,6 @@
-from mock import Mock, MagicMock
+from collections import defaultdict
 
-from braga.models import Entity, Component
+from braga import Entity, Component, System, Assemblage, Aspect
 
 from engine.Command import Command, ChangefulCommand
 from engine.exceptions import LogicError
@@ -26,7 +26,7 @@ class TestCommand(object):
 
 class Description(Component):
 
-    def __init__(self, description):
+    def __init__(self, description=None):
         self.description = description
 
 
@@ -53,14 +53,55 @@ class Container(Component):
     def put_down(self, thing):
         self._inventory.remove(thing)
 
-    def __str__(self):
-        return '\n'.join(self.inventory)
+    def get_thing(self, name):
+        things = [thing for thing in self._inventory if thing.name == name]
+        if len(things) == 1:
+            return things[0]
+
+    def print_inventory(self):
+        return '\n'.join([thing.name for thing in self.inventory])
 
 
 class Location(Component):
 
     def __init__(self, location=None):
         self.location = location
+
+
+class Name(Component):
+    """A name for the Entity."""
+
+    INITIAL_PROPERTIES = ['name']
+
+    def __init__(self, name=None):
+        self.name = name
+
+
+class NameSystem(System):
+    """Associates strings with Entities."""
+    def __init__(self, world):
+        super(NameSystem, self).__init__(world=world, aspect=Aspect(all_of=set([Name])))
+        self.names = defaultdict(lambda: None)
+        self.update()
+
+    @property
+    def tokens(self):
+        return self.names.keys()
+
+    def get_entity_from_name(self, name):
+        return self.names.get(name)
+
+    def add_alias(self, alias, entity):
+        self.names[alias] = entity
+
+    def update(self):
+        for entity in self.entities:
+            if entity.name in self.names.keys():
+                raise ValueError("Duplicate entity names")
+            self.names[entity.name] = entity
+
+
+generic_thing_factory = Assemblage(components=[Name, Description])
 
 
 class CommandTestBase(object):

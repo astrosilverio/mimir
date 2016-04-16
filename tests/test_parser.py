@@ -1,50 +1,63 @@
 import unittest
-from mock import MagicMock, patch
 
+from braga import World
+
+from engine.Command import Command
 from engine.Parser import Parser
-from engine.exceptions import ParserError, LogicError, Messages
-from tests.fixtures import TestPlayer
-from tests.fixtures import TestCommand
+from engine.exceptions import ParserError, Messages
+from tests.fixtures import generic_thing_factory as gtf
+from tests.fixtures import NameSystem
 
 
 class TestParser(unittest.TestCase):
 
     def setUp(self):
-        marauders_map_mock = MagicMock()
-        marauders_map_mock.canonicals = ['take', 'wand']
-        marauders_map_mock.noncanonicals = {'get': 'take'}
-        marauders_map_mock.commands = {'take': TestCommand()}
-        marauders_map_mock.add_player = lambda x: TestPlayer()
+        world = World()
+        self.player = world.make_entity(gtf, name='you')
+        self.wand = world.make_entity(gtf, name='wand')
+        self.fluff = world.make_entity(gtf, name='fluff')
+        self.cotton_candy = world.make_entity(gtf, name='cotton candy')
+        world.add_system(NameSystem)
 
-        self.parser = Parser('zork', marauders_map_mock)
+        self.command = Command(
+            name='take',
+            syntax=[lambda x, y: True],
+            response=lambda x, y: 'Congratulations you took your wand')
+        commands = {'take': self.command, 'get': self.command}
 
-    def test_process_with_canonicals_and_fluff(self):
-        processed = self.parser.process('take dratted wand')
-        self.assertEqual(processed, ['take', 'wand'])
+        self.parser = Parser(world, world.systems[NameSystem], self.player, commands)
 
-    def test_process_with_non_canonicals_and_fluff(self):
-        processed = self.parser.process('get dratted wand')
-        self.assertEqual(processed, ['take', 'wand'])
+    def test_normalize_with_real_words_and_fluff(self):
+        normalized = self.parser.normalize('take dratted wand')
+        self.assertEqual(normalized, ['take', 'wand'])
 
-    def test_process_symbol_removal(self):
-        processed = self.parser.process('*ta@ke* *this*, wand!?!')
-        self.assertEqual(processed, ['take', 'wand'])
+    def test_normalize_symbol_removal(self):
+        normalized = self.parser.normalize('*ta@ke* *this*, wand!?!')
+        self.assertEqual(normalized, ['take', 'wand'])
 
-    def test_process_with_fluff(self):
+    def test_normalize_with_fluff(self):
         with self.assertRaises(ParserError):
-            self.parser.process('dratted bloody thing')
+            self.parser.normalize('dratted bloody thing')
 
-    @patch('engine.LogicHandler.handle_command')
-    def test_execute_without_error(self, mock_handle_command):
-        mock_handle_command.return_value = 'Congratulations you took your wand'
-        response = self.parser.execute('take wand')
-        self.assertEqual(response, mock_handle_command.return_value)
+    def test_normalize_with_double_word_names(self):
+        normalized = self.parser.normalize('take cotton candy')
+        self.assertEqual(normalized, ['take', 'cotton candy'])
 
-    @patch('engine.LogicHandler.handle_command')
-    def test_execute_with_logic_error(self, mock_handle_command):
-        mock_handle_command.side_effect = LogicError('BOOM!')
+    def test_tokenization_of_known_words(self):
+        tokens = self.parser.tokenize(['take', 'wand', 'you', 'fluff'])
+        self.assertEqual(tokens, [self.command, self.wand, self.player, self.fluff])
+
+    def test_tokenization_with_unknown_words(self):
+        with self.assertRaises(ParserError):
+            self.parser.tokenize(['take', 'broomstick', 'wand'])
+
+    def test_tokenization_with_double_word_names(self):
+        tokens = self.parser.tokenize(['take', 'cotton candy'])
+        self.assertEqual(tokens, [self.command, self.cotton_candy])
+
+    def test_execute_without_error(self):
         response = self.parser.execute('take wand')
-        self.assertEqual(response, 'BOOM!')
+        self.assertEqual(response, 'Congratulations you took your wand')
 
     def test_execute_with_fluff(self):
         response = self.parser.execute('dratted bloody thing')

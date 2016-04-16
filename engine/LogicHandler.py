@@ -22,10 +22,6 @@ def handle_command(castle, player, command):
     verb = command[0]
     args = command[1:]
     command = castle.commands.get(verb, None)
-    if not command:
-        # if handle_command is called by Parser, we'll never see this
-        logger.error("handle_command called from outside Parser.execute by player %s in game %s", player.id, castle.name)
-        raise LogicError(Messages.UNKNOWN_VERB)
 
     handle_auto_movements(castle)
     result = command.execute(castle, player, *args)
