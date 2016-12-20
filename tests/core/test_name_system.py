@@ -37,6 +37,15 @@ class TestBasicNameSystem(unittest.TestCase):
     def test_names_in_tokens_property(self):
         self.assertEqual(self.name_system.tokens, self.name_system.names.keys())
 
+    def test_retrieving_unspecific_name_without_context_raises(self):
+        other_item = self.world.make_entity(self.item_factory, name='other item')
+        self.name_system.add_name('item one', other_item)
+
+        with self.assertRaises(ValueError) as e:
+            self.name_system.get_entity('item one')
+
+        self.assertEqual(e.exception.message, 'Which item one do you mean?')
+
 
 class TestContexts(unittest.TestCase):
 
@@ -50,13 +59,13 @@ class TestContexts(unittest.TestCase):
         self.name_system = NameSystem(world=self.world)
 
     def test_adding_entity_to_context(self):
-        self.name_system.add_entity_to_context(self.cat_one, self.human)
+        self.name_system.add_name_to_context('cat', self.cat_one, self.human)
 
         self.assertIn('cat', self.name_system.contexts[self.human].keys())
         self.assertEqual(self.name_system.contexts[self.human].get('cat'), self.cat_one)
 
     def test_system_preferentially_chooses_name_from_context(self):
-        self.name_system.add_entity_to_context(self.cat_one, self.human)
+        self.name_system.add_name_to_context('cat', self.cat_one, self.human)
 
-        chosen_cat = self.name_system.get_entity('cat', self.human)
+        chosen_cat = self.name_system.get_entity('cat', [self.human])
         self.assertEqual(chosen_cat, self.cat_one)

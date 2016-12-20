@@ -18,15 +18,17 @@ class NameSystem(System):
     def tokens(self):
         return self.names.keys()
 
-    def get_entity(self, name, entity_for_context=None):
-        if entity_for_context:
-            names_in_priority_order = ChainMap(self.contexts[entity_for_context], self.names)
+    def get_entity(self, name, entities_for_context=None):
+        if entities_for_context:
+            dictionaries = [self.contexts[entity] for entity in entities_for_context]
+            dictionaries.append(self.names)
+            names_in_priority_order = ChainMap(*dictionaries)
             entity = names_in_priority_order.get(name, None)
         else:
             entity = self.names.get(name, None)
         if isinstance(entity, list):
             if len(entity) > 1:
-                raise
+                raise ValueError("Which {} do you mean?".format(name))
             entity = entity[0]
 
         return entity
@@ -35,10 +37,12 @@ class NameSystem(System):
         if entity in self.names[name]:
             raise ValueError('Duplicate entity names')
         self.names[name].append(entity)
+        entity.names.append(name)
 
-    def add_entity_to_context(self, entity, entity_for_context):
-        self.contexts[entity_for_context][entity.name] = entity
+    def add_name_to_context(self, name, entity, entity_for_context):
+        self.contexts[entity_for_context][name] = entity
 
     def update(self):
         for entity in self.entities:
-            self.names[entity.name].append(entity)
+            for name in entity.names:
+                self.names[name].append(entity)
