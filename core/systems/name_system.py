@@ -3,6 +3,7 @@ from collections import defaultdict
 from braga import Aspect, System
 from chainmap import ChainMap
 
+from core.systems import ContextSystem
 from core.components import Name
 
 
@@ -11,27 +12,34 @@ class NameSystem(System):
     def __init__(self, world):
         super(NameSystem, self).__init__(world=world, aspect=Aspect(all_of=set([Name])))
         self.names = defaultdict(list)
-        self.contexts = defaultdict(dict)
         self.update()
 
     @property
     def tokens(self):
         return self.names.keys()
 
-    def get_entity(self, name, entities_for_context=None):
-        if entities_for_context:
-            dictionaries = [self.contexts[entity] for entity in entities_for_context]
-            dictionaries.append(self.names)
-            names_in_priority_order = ChainMap(*dictionaries)
-            entity = names_in_priority_order.get(name, None)
-        else:
-            entity = self.names.get(name, None)
-        if isinstance(entity, list):
-            if len(entity) > 1:
-                raise ValueError("Which {} do you mean?".format(name))
-            entity = entity[0]
+    def get_token_from_name(self, name, entity):
+        context_system = self.world.systems.get(ContextSystem)
+        self_context, location_context, contained_contexts = context_system.find_contexts_for_entity(entity)
+        if self_context and self_context.get(name):
+            return self_context.get(name)
 
-        return entity
+        possible_tokens = []
+        if location_context and location_context.get(name):
+            possible_tokens.append(location_context.get(name))
+        if contained_contexts:
+            contained_tokens = [context.get(name) for context in contained_contexts if context.get(name)]
+            possible_tokens.extend(contained_tokens)
+        if self.names.get(name):
+            possible_tokens.get(self.names.get(name))
+
+        if len(possible_tokens) > 1:
+            raise ValueError("For now I can't handle confusion")
+
+        if not possible_tokens:
+            raise ValueError("I don't know what you're talking about")
+
+        return possible_tokens
 
     def add_name(self, name, entity):
         if entity in self.names[name]:
