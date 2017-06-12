@@ -26,7 +26,7 @@ class TestInitialState(unittest.TestCase):
     def test_parsing_attributes(self):
         self.assertItemsEqual(
             self.parser.commands.keys(),
-            ['look', 'inventory', 'expelliarmus', 'set', 'check', 'state', 'equip', 'give', 'use'])
+            ['look', 'inventory', 'expelliarmus', 'set', 'check', 'state', 'equip', 'trade', 'use'])
 
     def test_player_attributes(self):
         self.assertEqual(
@@ -114,7 +114,7 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
 
     def test_set_non_integer_skill(self):
         try:
-            response = self.parser.execute('set skill your wand')
+            response = self.parser.execute('set skill my wand')
         except (StateError, LogicError, ParserError):
             self.fail("incorrect usage of `set` should not raise an error")
 
@@ -174,8 +174,8 @@ class TestTrade(unittest.TestCase):
             self.fail("That is correct syntax")
 
         expected_response = "You are carrying:\n\tjustin's wand \
-        \n\nYour expelliarmus skill is: {skill} \
-        \n\nYou are using justin's wand \
-        \n\njustin finch-fletchley is using your wand".format(skill=self.parser.player.skill)
+        \n\nYour expelliarmus skill is: {skill}\
+\n\nYou are using justin's wand\
+\n\njustin finch-fletchley is using your wand".format(skill=self.parser.player.skill)
 
         self.assertEqual(response, expected_response)

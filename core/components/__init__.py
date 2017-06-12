@@ -11,6 +11,14 @@ class Name(Component):
         self.names = [name]
 
 
+class Description(Component):
+
+    INITIAL_PROPERTIES = ['description']
+
+    def __init__(self, description=None):
+        self.description = description
+
+
 class Container(Component):
     """Ability to have an inventory. For rooms and players."""
 
@@ -54,12 +62,6 @@ class View(Component):
     @property
     def view_contents(self):
         return self._view_contents
-
-
-class Context(Component):
-    """Keeps track of other entities associated with the owning entity."""
-
-    INITIAL_PROPERTIES =
 
 
 class Contexts(Component):

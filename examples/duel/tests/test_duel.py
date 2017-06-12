@@ -3,6 +3,7 @@ import unittest
 from braga import World
 from braga.examples import duel
 
+from core.systems import NameSystem
 from engine.exceptions import StateError, LogicError, ParserError
 from engine.Parser import Parser
 from examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
@@ -14,7 +15,7 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
         self.world = World()
         self.world.add_system(duel.ContainerSystem)
         self.world.add_system(duel.EquipmentSystem)
-        self.world.add_system(duel.NameSystem)
+        self.world.add_system(NameSystem)
 
         room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
         self.player = self.world.make_entity(
@@ -63,7 +64,6 @@ class TestEquipCommand(unittest.TestCase):
         self.world = World()
         self.world.add_system(duel.ContainerSystem)
         self.world.add_system(duel.EquipmentSystem)
-        self.world.add_system(duel.NameSystem)
 
         room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
         self.player = self.world.make_entity(
@@ -116,7 +116,7 @@ class TestExpelliarmusCommand(unittest.TestCase):
         self.world = World()
         self.world.add_system(duel.ContainerSystem)
         self.world.add_system(duel.EquipmentSystem)
-        self.world.add_system(duel.NameSystem)
+        self.world.add_system(NameSystem)
 
         room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
         self.player = self.world.make_entity(duel.player_factory, name="you", description="You are a test", location=room)
@@ -183,7 +183,7 @@ class TestTradeCommand(unittest.TestCase):
         self.world = World()
         self.world.add_system(duel.ContainerSystem)
         self.world.add_system(duel.EquipmentSystem)
-        self.world.add_system(duel.NameSystem)
+        self.world.add_system(NameSystem)
 
         room = self.world.make_entity(duel.room_factory, name="duel room", description="test room")
         self.player = self.world.make_entity(duel.player_factory, name="you", description="You are a test", location=room)

@@ -16,11 +16,14 @@ class TestBasicNameSystem(unittest.TestCase):
         self.name_system = NameSystem(world=self.world)
 
     def test_entity_retrievable_from_name(self):
-        entity = self.name_system.get_entity('item one')
+        entity = self.name_system.get_token_from_name('item one')
         self.assertEqual(entity, self.item)
 
-    def test_none_returned_for_unknown_name(self):
-        self.assertIsNone(self.name_system.get_entity('asdfdsa'))
+    def test_unknown_name_raises(self):
+        with self.assertRaises(ValueError) as e:
+            self.assertIsNone(self.name_system.get_token_from_name('asdfdsa'))
+
+        self.assertEqual(e.exception.message, "I don't know what you're talking about")
 
     def test_aliases_can_be_created(self):
         self.name_system.add_name('cool item', self.item)
@@ -42,30 +45,6 @@ class TestBasicNameSystem(unittest.TestCase):
         self.name_system.add_name('item one', other_item)
 
         with self.assertRaises(ValueError) as e:
-            self.name_system.get_entity('item one')
+            self.name_system.get_token_from_name('item one')
 
-        self.assertEqual(e.exception.message, 'Which item one do you mean?')
-
-
-class TestContexts(unittest.TestCase):
-
-    def setUp(self):
-        self.world = World()
-        self.item_factory = Assemblage(components=[Name])
-        self.human = self.world.make_entity(self.item_factory, name='human')
-        self.cat_one = self.world.make_entity(self.item_factory, name='cat')
-        self.cat_two = self.world.make_entity(self.item_factory, name='cat')
-
-        self.name_system = NameSystem(world=self.world)
-
-    def test_adding_entity_to_context(self):
-        self.name_system.add_name_to_context('cat', self.cat_one, self.human)
-
-        self.assertIn('cat', self.name_system.contexts[self.human].keys())
-        self.assertEqual(self.name_system.contexts[self.human].get('cat'), self.cat_one)
-
-    def test_system_preferentially_chooses_name_from_context(self):
-        self.name_system.add_name_to_context('cat', self.cat_one, self.human)
-
-        chosen_cat = self.name_system.get_entity('cat', [self.human])
-        self.assertEqual(chosen_cat, self.cat_one)
+        self.assertEqual(e.exception.message, "For now I can't handle confusion")

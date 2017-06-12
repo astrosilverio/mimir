@@ -1,9 +1,7 @@
 from collections import defaultdict
 
 from braga import Aspect, System
-from chainmap import ChainMap
 
-from core.systems import ContextSystem
 from core.components import Name
 
 
@@ -18,9 +16,17 @@ class NameSystem(System):
     def tokens(self):
         return self.names.keys()
 
-    def get_token_from_name(self, name, entity):
+    def get_token_from_name(self, name, entity=None):
+        from core.systems import ContextSystem
         context_system = self.world.systems.get(ContextSystem)
-        self_context, location_context, contained_contexts = context_system.find_contexts_for_entity(entity)
+
+        self_context = None
+        location_context = None
+        contained_contexts = None
+
+        if entity:
+            self_context, location_context, contained_contexts = context_system.find_contexts_for_entity(entity)
+
         if self_context and self_context.get(name):
             return self_context.get(name)
 
@@ -31,7 +37,7 @@ class NameSystem(System):
             contained_tokens = [context.get(name) for context in contained_contexts if context.get(name)]
             possible_tokens.extend(contained_tokens)
         if self.names.get(name):
-            possible_tokens.get(self.names.get(name))
+            possible_tokens.extend(self.names.get(name))
 
         if len(possible_tokens) > 1:
             raise ValueError("For now I can't handle confusion")
@@ -39,16 +45,13 @@ class NameSystem(System):
         if not possible_tokens:
             raise ValueError("I don't know what you're talking about")
 
-        return possible_tokens
+        return possible_tokens[0]
 
     def add_name(self, name, entity):
         if entity in self.names[name]:
             raise ValueError('Duplicate entity names')
         self.names[name].append(entity)
-        entity.names.append(name)
-
-    def add_name_to_context(self, name, entity, entity_for_context):
-        self.contexts[entity_for_context][name] = entity
+        # entity.names.append(name)
 
     def update(self):
         for entity in self.entities:
