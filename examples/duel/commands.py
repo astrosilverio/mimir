@@ -97,7 +97,7 @@ def _get_expelliarmus_skill(player):
 def _player_can_successfully_cast_expelliarmus(world, player, other_player):
     player_skill = _get_expelliarmus_skill(player)
     if player_skill < random.randint(1, 20):
-        raise LogicError("Nothing happens.")
+        raise LogicError("Nothing happens. Luckily for you, Justin is still deciding what spell to cast.")
 
 
 def _legal_skill_level(world, player, skill):

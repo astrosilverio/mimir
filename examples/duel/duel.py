@@ -17,7 +17,7 @@ def setUp():
     # Make room
     duel_room = duel_world.make_entity(
         duel.room_factory,
-        description="You are in a large, dusty room, standing at one end of a long wooden table. Someone has placed a sign on an easel that says 'Duelling club'. There is a door in the southwest corner.",
+        description="You are in a large, dusty room, standing at one end of a long wooden table. Someone has placed a sign on an easel that says 'Duelling club'. Justin Finch-Fletchley stands at the other end of the table, wand raised. You have only practiced one spell--expelliarmus.",
         name='Duel Room'
     )
 
