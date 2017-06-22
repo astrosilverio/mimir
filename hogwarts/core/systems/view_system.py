@@ -1,6 +1,6 @@
 from braga import System, Aspect
 
-from core.components import View
+from hogwarts.core.components import View
 
 
 class ViewSystem(System):

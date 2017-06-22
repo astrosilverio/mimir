@@ -1,8 +1,8 @@
 import unittest
 
-from engine.exceptions import Messages
-from engine.Parser import Parser
-from tests.fixtures import make_toy_world, commands, PATH_ERROR
+from hogwarts.engine.exceptions import Messages
+from hogwarts.engine.Parser import Parser
+from hogwarts.tests.fixtures import make_toy_world, commands, PATH_ERROR
 
 
 class TestFullIntegration(unittest.TestCase):

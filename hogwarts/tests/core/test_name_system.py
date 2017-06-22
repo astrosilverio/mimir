@@ -2,8 +2,8 @@ import unittest
 
 from braga import Assemblage, World
 
-from core.components import Name
-from core.systems import NameSystem
+from hogwarts.core.components import Name
+from hogwarts.core.systems import NameSystem
 
 
 class TestBasicNameSystem(unittest.TestCase):

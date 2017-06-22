@@ -4,8 +4,8 @@ import re
 from braga import Aspect
 from braga.examples import duel
 
-from engine.Command import Command, ChangefulCommand
-from engine.exceptions import LogicError
+from hogwarts.engine.Command import Command, ChangefulCommand
+from hogwarts.engine.exceptions import LogicError
 
 player_aspect = Aspect.make_from(duel.player_factory)
 

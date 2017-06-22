@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from braga import Aspect, System
 
-from core.components import Name
+from hogwarts.core.components import Name
 
 
 class NameSystem(System):
@@ -17,7 +17,7 @@ class NameSystem(System):
         return self.names.keys()
 
     def get_token_from_name(self, name, entity=None):
-        from core.systems import ContextSystem
+        from hogwarts.core.systems import ContextSystem
         context_system = self.world.systems.get(ContextSystem)
 
         self_context = None

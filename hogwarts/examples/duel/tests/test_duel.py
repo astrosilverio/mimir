@@ -3,10 +3,10 @@ import unittest
 from braga import World
 from braga.examples import duel
 
-from core.systems import NameSystem
-from engine.exceptions import StateError, LogicError, ParserError
-from engine.Parser import Parser
-from examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
+from hogwarts.core.systems import NameSystem
+from hogwarts.engine.exceptions import StateError, LogicError, ParserError
+from hogwarts.engine.Parser import Parser
+from hogwarts.examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
 
 
 class TestExpelliarmusHelperCommands(unittest.TestCase):
