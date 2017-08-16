@@ -3,8 +3,9 @@ from __future__ import absolute_import
 from braga import World
 from braga.examples import duel
 
-from engine.Parser import Parser
-from examples.duel.commands import commands
+from hogwarts.core.systems import NameSystem
+from hogwarts.engine.Parser import Parser
+from hogwarts.examples.duel.commands import commands
 
 
 def setUp():
@@ -12,7 +13,7 @@ def setUp():
     duel_world = World()
     duel_world.add_system(duel.ContainerSystem)
     duel_world.add_system(duel.EquipmentSystem)
-    duel_world.add_system(duel.NameSystem)
+    duel_world.add_system(NameSystem)
 
     # Make room
     duel_room = duel_world.make_entity(
@@ -53,13 +54,15 @@ def setUp():
     duel_world.systems[duel.EquipmentSystem].equip(justin, justin_wand)
     duel_world.systems[duel.EquipmentSystem].update()
 
-    duel_world.systems[duel.NameSystem].update()
+    duel_world.systems[NameSystem].update()
     duel_world.systems[duel.ContainerSystem].update()
 
-    parser = Parser(duel_world, duel_world.systems[duel.NameSystem], player, commands)
-    parser.name_system.add_alias("my wand", player_wand)
-    parser.name_system.add_alias("his wand", justin_wand)
-    parser.name_system.add_alias("justin", justin)
+    parser = Parser(duel_world, duel_world.systems[NameSystem], player, commands)
+    parser.name_system.add_name('you', player)
+    parser.name_system.add_name("my wand", player_wand)
+    parser.name_system.add_name("his wand", justin_wand)
+    parser.name_system.add_name("justin's wand", justin_wand)
+    parser.name_system.add_name("justin", justin)
 
     return parser
 

@@ -3,9 +3,9 @@ import unittest
 
 from braga.examples import duel
 
-from engine.exceptions import StateError, LogicError, ParserError
-from examples.duel.duel import setUp as duel_setup
-from examples.duel.commands import player_aspect
+from hogwarts.engine.exceptions import StateError, LogicError, ParserError
+from hogwarts.examples.duel.duel import setUp as duel_setup
+from hogwarts.examples.duel.commands import player_aspect
 
 
 class TestInitialState(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestInitialState(unittest.TestCase):
     def test_parsing_attributes(self):
         self.assertItemsEqual(
             self.parser.commands.keys(),
-            ['look', 'inventory', 'expelliarmus', 'set', 'check', 'state', 'equip', 'give', 'use'])
+            ['look', 'inventory', 'expelliarmus', 'set', 'check', 'state', 'equip', 'trade', 'use'])
 
     def test_player_attributes(self):
         self.assertEqual(
@@ -87,7 +87,7 @@ class TestExpelliarmus(unittest.TestCase):
         response = self.parser.execute('expelliarmus his wand')
         self.assertEqual(response, "You can only perform that action on other people!")
 
-    @patch('examples.duel.commands._get_expelliarmus_skill', return_value=20)
+    @patch('hogwarts.examples.duel.commands._get_expelliarmus_skill', return_value=20)
     def test_successful_expelliarmus(self, _):
         response = self.parser.execute('expelliarmus justin')
         # this is a bit gross
@@ -114,7 +114,7 @@ class TestExpelliarmusHelperCommands(unittest.TestCase):
 
     def test_set_non_integer_skill(self):
         try:
-            response = self.parser.execute('set skill your wand')
+            response = self.parser.execute('set skill my wand')
         except (StateError, LogicError, ParserError):
             self.fail("incorrect usage of `set` should not raise an error")
 
@@ -174,8 +174,8 @@ class TestTrade(unittest.TestCase):
             self.fail("That is correct syntax")
 
         expected_response = "You are carrying:\n\tjustin's wand \
-        \n\nYour expelliarmus skill is: {skill} \
-        \n\nYou are using justin's wand \
-        \n\njustin finch-fletchley is using your wand".format(skill=self.parser.player.skill)
+        \n\nYour expelliarmus skill is: {skill}\
+\n\nYou are using justin's wand\
+\n\njustin finch-fletchley is using your wand".format(skill=self.parser.player.skill)
 
         self.assertEqual(response, expected_response)

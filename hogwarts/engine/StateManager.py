@@ -1,6 +1,5 @@
-from engine.exceptions import StateError
-
-from base import Player
+from hogwarts.engine.exceptions import StateError
+from hogwarts.engine.base import Player
 
 
 class StateManager(object):

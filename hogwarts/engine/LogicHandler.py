@@ -1,7 +1,5 @@
 import logging
 
-from engine.exceptions import LogicError, Messages
-
 logger = logging.getLogger('LogicHandler')
 
 ################################################################################################
@@ -24,7 +22,7 @@ def handle_command(castle, player, command):
     command = castle.commands.get(verb, None)
 
     handle_auto_movements(castle)
-    result = command.execute(castle, player, *args)
+    result = command(castle, player, *args)
 
     return result if result else None
 

@@ -1,4 +1,4 @@
-from engine.exceptions import StateError, LogicError, Messages
+from hogwarts.engine.exceptions import StateError, LogicError, Messages
 
 
 class Command(object):

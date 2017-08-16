@@ -3,3 +3,9 @@ blog/*
 
 # relics of call graph test experiments
 *.gdf
+
+*.pyc
+/dist/
+/build/
+/*.egg-info
+/*.egg

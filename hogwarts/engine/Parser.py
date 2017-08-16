@@ -1,4 +1,4 @@
-from engine.exceptions import ParserError, LogicError, StateError, Messages
+from hogwarts.engine.exceptions import ParserError, LogicError, StateError, Messages
 
 import re
 
@@ -25,7 +25,7 @@ class Parser(object):
     def get_entity(self, word):
         if self._is_number(word):
             return word
-        entity = self.name_system.get_entity_from_name(word)
+        entity = self.name_system.get_token_from_name(word)
         if not entity:
             raise ParserError("Cannot find entity with that name")
         return entity
