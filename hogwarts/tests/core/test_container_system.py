@@ -3,7 +3,7 @@ import unittest
 from braga import World, Assemblage
 
 from hogwarts.core.components import Container, Moveable
-from hogwarts.core.systems import ContainerSystem
+from hogwarts.core.systems import container_system
 
 
 class TestContainerSystem(unittest.TestCase):
@@ -17,10 +17,8 @@ class TestContainerSystem(unittest.TestCase):
         self.thing_factory = Assemblage(components=[Moveable])
         self.thing = self.world.make_entity(self.thing_factory, location=self.bucket_one)
 
-        self.container_system = ContainerSystem(world=self.world)
-
     def test_move_item_to_new_inventory(self):
-        self.container_system.move(self.thing, self.bucket_two)
+        container_system.move(self.thing, self.bucket_two)
 
         self.assertEqual(self.thing.location, self.bucket_two)
         self.assertEqual(self.bucket_two.inventory, set([self.thing]))
@@ -29,7 +27,7 @@ class TestContainerSystem(unittest.TestCase):
         bookcase = self.world.make_entity()
 
         with self.assertRaises(ValueError) as e:
-            self.container_system.move(bookcase, self.bucket_two)
+            container_system.move(bookcase, self.bucket_two)
 
         self.assertEqual(e.exception.message, "You cannot move this item")
         self.assertEqual(self.bucket_two.inventory, set([]))
@@ -37,7 +35,7 @@ class TestContainerSystem(unittest.TestCase):
     def test_cannot_move_item_to_non_container(self):
         new_thing = self.thing_factory.make()
         with self.assertRaises(ValueError) as e:
-            self.container_system.move(self.thing, new_thing)
+            container_system.move(self.thing, new_thing)
 
         self.assertEqual(e.exception.message, "Invalid destination")
         self.assertEqual(self.thing.location, self.bucket_one)

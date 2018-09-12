@@ -1,9 +1,3 @@
-from braga import System, Aspect
+from braga import System
 
-from hogwarts.core.components import View
-
-
-class ViewSystem(System):
-
-    def __init__(self, world):
-        super(ViewSystem, self).__init__(world=world, aspect=Aspect(all_of=set([View])))
+view_system = System()

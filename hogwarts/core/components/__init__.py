@@ -42,6 +42,8 @@ class Moveable(Component):
 
     def __init__(self, location=None):
         self.location = location
+        if self.location:
+            location.inventory.add(self)
 
 
 class View(Component):
