@@ -3,9 +3,9 @@ from __future__ import absolute_import
 from braga import World
 from braga.examples import duel
 
-from hogwarts.core.systems import NameSystem
-from hogwarts.engine.Parser import Parser
-from hogwarts.examples.duel.commands import commands
+from mimir.core.systems import NameSystem
+from mimir.engine.Parser import Parser
+from mimir.examples.duel.commands import commands
 
 
 def setUp():

@@ -3,10 +3,10 @@ import unittest
 from braga import World
 from braga.examples import duel
 
-from hogwarts.core.systems import NameSystem
-from hogwarts.engine.exceptions import StateError, LogicError, ParserError
-from hogwarts.engine.Parser import Parser
-from hogwarts.examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
+from mimir.core.systems import NameSystem
+from mimir.engine.exceptions import StateError, LogicError, ParserError
+from mimir.engine.Parser import Parser
+from mimir.examples.duel.commands import equip, expelliarmus, set_expelliarmus_skill, get_expelliarmus_skill, trade_wands
 
 
 class TestExpelliarmusHelperCommands(unittest.TestCase):

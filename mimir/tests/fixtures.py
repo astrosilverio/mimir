@@ -2,10 +2,10 @@ from __future__ import absolute_import
 
 from braga import Component, Assemblage, World
 
-from hogwarts.core.components import Name
-from hogwarts.core.systems import NameSystem
-from hogwarts.engine.Command import Command, ChangefulCommand
-from hogwarts.engine.exceptions import LogicError
+from mimir.core.components import Name
+from mimir.core.systems import NameSystem
+from mimir.engine.Command import Command, ChangefulCommand
+from mimir.engine.exceptions import LogicError
 
 
 DIRECTION_ERROR = "I don't know how to go that direction."

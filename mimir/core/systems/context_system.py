@@ -1,6 +1,6 @@
 from braga import System, Aspect
 
-from hogwarts.core import components
+from mimir.core import components
 
 
 class ContextSystem(System):

@@ -3,11 +3,11 @@ import unittest
 
 from braga import World, Assemblage
 
-from hogwarts.core.components import Name, Description
-from hogwarts.engine.Command import Command
-from hogwarts.engine.Parser import Parser
-from hogwarts.engine.exceptions import ParserError, Messages
-from hogwarts.tests.fixtures import NameSystem
+from mimir.core.components import Name, Description
+from mimir.engine.Command import Command
+from mimir.engine.Parser import Parser
+from mimir.engine.exceptions import ParserError, Messages
+from mimir.tests.fixtures import NameSystem
 
 
 class TestParser(unittest.TestCase):

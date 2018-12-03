@@ -3,9 +3,9 @@ import unittest
 
 from braga import Assemblage
 
-from hogwarts.core.components import Name
-from hogwarts.engine.exceptions import Messages, LogicError
-from hogwarts.tests.fixtures import look, go, make_toy_world, PATH_ERROR, DIRECTION_ERROR
+from mimir.core.components import Name
+from mimir.engine.exceptions import Messages, LogicError
+from mimir.tests.fixtures import look, go, make_toy_world, PATH_ERROR, DIRECTION_ERROR
 
 
 class TestCheckSyntax(unittest.TestCase):

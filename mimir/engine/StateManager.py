@@ -1,5 +1,5 @@
-from hogwarts.engine.exceptions import StateError
-from hogwarts.engine.base import Player
+from mimir.engine.exceptions import StateError
+from mimir.engine.base import Player
 
 
 class StateManager(object):

@@ -3,9 +3,9 @@ import unittest
 
 from braga.examples import duel
 
-from hogwarts.engine.exceptions import StateError, LogicError, ParserError
-from hogwarts.examples.duel.duel import setUp as duel_setup
-from hogwarts.examples.duel.commands import player_aspect
+from mimir.engine.exceptions import StateError, LogicError, ParserError
+from mimir.examples.duel.duel import setUp as duel_setup
+from mimir.examples.duel.commands import player_aspect
 
 
 class TestInitialState(unittest.TestCase):
@@ -87,7 +87,7 @@ class TestExpelliarmus(unittest.TestCase):
         response = self.parser.execute('expelliarmus his wand')
         self.assertEqual(response, "You can only perform that action on other people!")
 
-    @patch('hogwarts.examples.duel.commands._get_expelliarmus_skill', return_value=20)
+    @patch('mimir.examples.duel.commands._get_expelliarmus_skill', return_value=20)
     def test_successful_expelliarmus(self, _):
         response = self.parser.execute('expelliarmus justin')
         # this is a bit gross

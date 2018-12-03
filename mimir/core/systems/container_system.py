@@ -1,6 +1,6 @@
 from braga import System, Aspect
 
-from hogwarts.core.components import Container, Moveable
+from mimir.core.components import Container, Moveable
 
 
 class ContainerSystem(System):

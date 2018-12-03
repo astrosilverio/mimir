@@ -1,4 +1,4 @@
-# Hogwarts
+# mimir
 
 A framework for writing and running text adventures.
 

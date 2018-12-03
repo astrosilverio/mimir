@@ -2,8 +2,8 @@ import unittest
 
 from braga import World, Assemblage
 
-from hogwarts.core.components import Container, Moveable
-from hogwarts.core.systems import ContainerSystem
+from mimir.core.components import Container, Moveable
+from mimir.core.systems import ContainerSystem
 
 
 class TestContainerSystem(unittest.TestCase):
